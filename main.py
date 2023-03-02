@@ -126,8 +126,8 @@ for chunk in tqdm(chunked_words):
         continue
     if chunk[0] == "p":
         time.sleep(101)
-    translated_words.extend( translator.translate(chunk, dest = 'en', src = 'lt'))
+    translated_words.extend( translator.translate(chunk, dest = 'en', src = 'lt'))  #API is very slow. Multiple minutes.
 
 with open("Words.txt", "w+", encoding='utf-8') as f:
     for lt,en in tqdm(zip(sorted_words,translated_words)):
-        f.write(f"{lt}:{en}\n")
+        f.write(f"{lt}:{en.text}\n")
