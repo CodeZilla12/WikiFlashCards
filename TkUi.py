@@ -1,13 +1,16 @@
 import tkinter as tk
-from tkinter import ttk
 
-FONT = ("Verdana", 35)
-
+FONTSIZE = 20
+FONT = ("Verdana", FONTSIZE)
 
 class tkinterUI(tk.Tk):
 
     def __init__(self, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
+
+        tkinterUI.width, tkinterUI.height = 800,400
+
+        self.geometry(f"{self.width}x{self.height}")
 
         frame_container = tk.Frame(self)
         frame_container.pack(side="top", fill="both", expand=True)
@@ -17,13 +20,14 @@ class tkinterUI(tk.Tk):
         self.frame_dict = {}
 
         # All frames are rendered at all times, just 'focused' as needed.
-        for FRAME in [StartPage]:
+        # Definitely not the best way to do this, just a prototype.
+        for FRAME in [FlashcardPage]:
             _frame = FRAME(frame_container, self)
 
             self.frame_dict[FRAME] = _frame
             _frame.grid(row=0, column=0, sticky="nsew")
 
-        self.show_frame(StartPage)
+        self.show_frame(FlashcardPage)
 
     def show_frame(self, frame_name):
 
@@ -31,13 +35,27 @@ class tkinterUI(tk.Tk):
         frame.tkraise()
 
 
-class StartPage(tk.Frame):
+class FlashcardPage(tk.Frame):
     def __init__(self, parent: tk.Frame, controller: tk.Tk):
         tk.Frame.__init__(self, parent)
 
-        label = ttk.Label(self, text="Start Page", font=FONT)
+        self.word_pair_list = [("Vienas","One"), ("Du","Two"), ("Trys","Three")]
+        self.word_index = 0
 
-        label.grid(row=0, column=4, padx=10, pady=10)
+        self.displayed_word = tk.Label(self, text=self.word_pair_list[0][0], font=FONT)
+        self.displayed_word.place(relx=0.5, y=0+FONTSIZE, anchor=tk.CENTER)   #Displays text in center of top row
+
+
+        self.show_word_button = tk.Button(self, text = "Show Word", command = self.show_word_button_clicked)
+        self.show_word_button.pack(side = tk.BOTTOM, pady=20)
+
+    def show_word_button_clicked(self):
+        self.displayed_word.configure( text=self.word_pair_list[self.word_index][1] )
+        self.show_word_button.destroy()
+
+        
+
+
 
 
 if __name__ == "__main__":
