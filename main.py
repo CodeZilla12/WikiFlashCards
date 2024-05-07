@@ -11,7 +11,7 @@ import time
 
 root = "https://lt.wikipedia.org"
 SEED_LINK = "https://lt.wikipedia.org/wiki/Taryb%C5%B3_S%C4%85junga"
-SEARCH_DEPTH = 2
+SEARCH_DEPTH = 1
 
 word_dict = get_words_from_articles(SEED_LINK,SEARCH_DEPTH)
 

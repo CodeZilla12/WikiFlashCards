@@ -4,7 +4,9 @@ from tqdm import tqdm
 
 def get_words_from_articles(seed_url:str, search_depth = 1) -> dict: 
 
-    links = _grab_links_recursively(seed_url,search_depth)
+    links = list(set( _grab_links_recursively(seed_url,search_depth )))
+
+    links = list(set(links))
 
     word_dict = {}
 
@@ -14,6 +16,9 @@ def get_words_from_articles(seed_url:str, search_depth = 1) -> dict:
         word_dict = _store_words_in_dict( word_dict, text )
 
     return word_dict
+
+def filter_links(link_list:lst) -> list:
+    pass
 
 def _grab_links_in_article(url: str) -> list:
 
@@ -30,7 +35,7 @@ def _grab_links_in_article(url: str) -> list:
             print(f"No links found at {url}!")
             return []
 
-        return all_links
+        return list(set(all_links))
 
 def _grab_links_recursively(seed_url:str,search_depth=1):
 
