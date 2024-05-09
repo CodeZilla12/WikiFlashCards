@@ -62,16 +62,22 @@ class FlashcardPage(tk.Frame):
         self.button_frame = tk.Frame()
 
         self.easy_button = tk.Button(self.button_frame, text = "Easy (z)", command = partial(self.answer_button_clicked, "easy")) #Instead of generating these every time - have them show and hide accordingly
+        self.hard_button = tk.Button(self.button_frame, text = "Hard (x)", command = partial(self.answer_button_clicked, "hard"))
+        self.okay_button = tk.Button(self.button_frame, text = "Easy (c)", command = partial(self.answer_button_clicked, "okay"))
         self.fail_button = tk.Button(self.button_frame, text = "Fail (v)", command = partial(self.answer_button_clicked, "fail"))
         
         self.easy_button.pack(side = tk.LEFT)
         self.fail_button.pack(side = tk.RIGHT)
 
+
         #Initialising Hotkeys
         self.bind("<space>", self.show_word_button_clicked)
         self.bind("z", partial(self.answer_button_clicked, "fail"))
+        self.bind("x", partial(self.answer_button_clicked, "hard"))
+        self.bind("c", partial(self.answer_button_clicked, "okay"))
         self.bind("v", partial(self.answer_button_clicked, "easy"))
         self.focus_set()    #Focuses current frame so that it can take keypresses
+    
     
     def display_next_word(self):
         self.word_index += 1
