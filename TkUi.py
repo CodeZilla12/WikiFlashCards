@@ -1,4 +1,5 @@
 import tkinter as tk
+#from tkinter import ttk
 from functools import partial
 import csv
 
@@ -62,16 +63,16 @@ class FlashcardPage(tk.Frame):
         #Initialising answering widgets
         self.button_frame = tk.Frame()
 
-        self.easy_button = tk.Button(self.button_frame, text = "Easy (z)", command = partial(self.answer_button_clicked, "easy")) #Instead of generating these every time - have them show and hide accordingly
+        self.easy_button = tk.Button(self.button_frame, text = "Easy (v)", command = partial(self.answer_button_clicked, "easy")) #Instead of generating these every time - have them show and hide accordingly
         self.hard_button = tk.Button(self.button_frame, text = "Hard (x)", command = partial(self.answer_button_clicked, "hard"))
         self.okay_button = tk.Button(self.button_frame, text = "Okay (c)", command = partial(self.answer_button_clicked, "okay"))
-        self.fail_button = tk.Button(self.button_frame, text = "Fail (v)", command = partial(self.answer_button_clicked, "fail"))
+        self.fail_button = tk.Button(self.button_frame, text = "Fail (z)", command = partial(self.answer_button_clicked, "fail"))
         
         #Packs buttons into button_frame side-by-side
-        self.easy_button.pack(side = tk.LEFT)
-        self.hard_button.pack(side = tk.RIGHT)
-        self.okay_button.pack(side = tk.RIGHT)
-        self.fail_button.pack(side = tk.RIGHT)
+        self.fail_button.grid(row=0,column=0)
+        self.hard_button.grid(row=0,column=1)
+        self.okay_button.grid(row=0,column=2)
+        self.easy_button.grid(row=0,column=3)
 
 
         #Initialising Hotkeys
@@ -88,13 +89,13 @@ class FlashcardPage(tk.Frame):
         #Items are stored in the csv as:
         #word,score[/n]word,score[\n]....
         word_list = []
-        with open(file_path,'r') as f:
+        with open(file_path,'r',encoding="utf8") as f:
             csv_reader = csv.reader(f,delimiter=",")
             for row in csv_reader:
 
                 if len(row) == 2:
                     row.append(0)
-
+                    
                 word,translated_word,score = row
                 word_list.append( (word,translated_word,score) )
         
