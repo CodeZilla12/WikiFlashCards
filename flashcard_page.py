@@ -11,15 +11,15 @@ class FlashcardPage(tk.Frame):
 
         self.controller = controller
 
-        WORD_CSV_PATH = "word_scores.csv"
-        self.word_pair_list = self.get_words_and_scores_from_csv(WORD_CSV_PATH)
+        self.WORD_CSV_PATH = "word_scores.csv"
+        self.word_trans_score_list = self.get_words_and_scores_from_csv(self.WORD_CSV_PATH)
         self.word_index = 0
         self.waiting_for_answer = False
         self.word_list_complete = False
 
         #Initialising Initial display widgets
         self.displayed_word = tk.Label(
-            self,text = self.word_pair_list[self.word_index][0] ,font=FONT)
+            self,text = self.word_trans_score_list[self.word_index][0] ,font=FONT)
         self.displayed_word.place(relx=0.5, rely=0.3, anchor=tk.CENTER)
 
         self.show_word_button = tk.Button(
@@ -29,6 +29,19 @@ class FlashcardPage(tk.Frame):
 
         #Initialising answering widgets
         self.button_frame = tk.Frame()
+
+        self.EASY_SCORE = 1
+        self.OKAY_SCORE = 0.75
+        self.HARD_SCORE = 0.25
+        self.FAIL_SCORE = -1
+
+        self.SCORE_VALUE_DICT = {
+            "easy":1,
+            "okay":0.75,
+            "hard":0.25,
+            "fail":-0.25
+                                 }
+
 
         self.easy_button = tk.Button(self.button_frame, text = "Easy (v)", command = partial(self.answer_button_clicked, "easy")) #Instead of generating these every time - have them show and hide accordingly
         self.hard_button = tk.Button(self.button_frame, text = "Hard (x)", command = partial(self.answer_button_clicked, "hard"))
@@ -52,7 +65,7 @@ class FlashcardPage(tk.Frame):
         self.focus_set()    #Focuses current frame so that it can take keypresses
 
     @staticmethod
-    def get_words_and_scores_from_csv(file_path:str):
+    def get_words_and_scores_from_csv(file_path:str) -> list:
 
         #Items are stored in the csv as:
         #word,score[/n]word,score[\n]....
@@ -60,14 +73,24 @@ class FlashcardPage(tk.Frame):
         with open(file_path,'r',encoding="utf8") as f:
             csv_reader = csv.reader(f,delimiter=",")
             for row in csv_reader:
+                
+                if len(row) == 0:
+                    continue
 
-                if len(row) == 2:
+                if len(row) == 2: #Make this check more specific
                     row.append(0)
-                    
+                
                 word,translated_word,score = row
-                word_list.append( (word,translated_word,score) )
+                word_list.append( [word,translated_word,int(score)] )
         
         return word_list
+
+    @staticmethod
+    def write_scores_to_csv(file_path:str, word_trans_score_list:list) -> None:
+        with open(file_path,'w',encoding="utf-8") as f:
+            csv_writer = csv.writer(f,delimiter=",",lineterminator="\n")
+            
+            csv_writer.writerows(word_trans_score_list)
 
 
     def kill_program(self,*_):
@@ -75,18 +98,22 @@ class FlashcardPage(tk.Frame):
         print("Ending Program...")
 
         self.controller.destroy()
-        
+
 
     def display_next_word(self):
         self.word_index += 1
 
-        if self.word_index >= len( self.word_pair_list ):
+        self.write_scores_to_csv(self.WORD_CSV_PATH,self.word_trans_score_list)
+
+        #print("Saved Score")
+
+        if self.word_index >= len( self.word_trans_score_list ):
             self.word_list_complete = True
             self.displayed_word.config(text= "Complete")
             self.show_word_button.pack_forget()
             return
         
-        self.displayed_word.config(text = self.word_pair_list[self.word_index][0])
+        self.displayed_word.config(text = self.word_trans_score_list[self.word_index][0])
 
     def show_word_button_clicked(self, *_):
 
@@ -98,7 +125,7 @@ class FlashcardPage(tk.Frame):
 
         self.waiting_for_answer = True
         self.displayed_word.configure(
-            text=self.word_pair_list[self.word_index][1])
+            text=self.word_trans_score_list[self.word_index][1])
         self.show_word_button.pack_forget()
 
         self.button_frame.pack(side = tk.BOTTOM, pady="10px")
@@ -110,6 +137,8 @@ class FlashcardPage(tk.Frame):
         #In case of function called from hotkey
         if not self.waiting_for_answer or self.word_list_complete:
             return
+
+        self.word_trans_score_list[self.word_index][2] += self.SCORE_VALUE_DICT[answer]
 
         self.button_frame.pack_forget()
         self.show_word_button.pack(side=tk.BOTTOM, pady=20)
