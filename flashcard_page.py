@@ -30,16 +30,11 @@ class FlashcardPage(tk.Frame):
         #Initialising answering widgets
         self.button_frame = tk.Frame()
 
-        self.EASY_SCORE = 1
-        self.OKAY_SCORE = 0.75
-        self.HARD_SCORE = 0.25
-        self.FAIL_SCORE = -1
-
         self.SCORE_VALUE_DICT = {
             "easy":1,
-            "okay":0.75,
+            "okay":0.5,
             "hard":0.25,
-            "fail":-0.25
+            "fail":-1
                                  }
 
 
