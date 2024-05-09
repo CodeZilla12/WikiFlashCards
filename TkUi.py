@@ -44,6 +44,8 @@ class FlashcardPage(tk.Frame):
     def __init__(self, parent: tk.Frame, controller: tk.Tk):
         tk.Frame.__init__(self, parent)
 
+        self.controller = controller
+
         WORD_CSV_PATH = "word_scores.csv"
         self.word_pair_list = self.get_words_and_scores_from_csv(WORD_CSV_PATH)
         self.word_index = 0
@@ -76,13 +78,14 @@ class FlashcardPage(tk.Frame):
 
 
         #Initialising Hotkeys
+        self.bind("<Escape>", self.kill_program)
         self.bind("<space>", self.show_word_button_clicked)
         self.bind("z", partial(self.answer_button_clicked, "fail"))
         self.bind("x", partial(self.answer_button_clicked, "hard"))
         self.bind("c", partial(self.answer_button_clicked, "okay"))
         self.bind("v", partial(self.answer_button_clicked, "easy"))
         self.focus_set()    #Focuses current frame so that it can take keypresses
-    
+
     @staticmethod
     def get_words_and_scores_from_csv(file_path:str):
 
@@ -101,8 +104,13 @@ class FlashcardPage(tk.Frame):
         
         return word_list
 
-            
 
+    def kill_program(self,*_):
+
+        print("Ending Program...")
+
+        self.controller.destroy()
+        
 
     def display_next_word(self):
         self.word_index += 1
