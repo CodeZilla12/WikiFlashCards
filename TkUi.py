@@ -1,4 +1,5 @@
 import tkinter as tk
+from functools import partial
 
 FONTSIZE = 20
 FONT = ("Verdana", FONTSIZE)
@@ -45,8 +46,12 @@ class FlashcardPage(tk.Frame):
             ("Vienas", "One"), ("Du", "Two"), ("Trys", "Three")]
         self.word_index = 0
 
+        self.display_next_word()
+
+    
+    def display_next_word(self):
         self.displayed_word = tk.Label(
-            self, text=self.word_pair_list[0][0], font=FONT)
+            self, text=self.word_pair_list[self.word_index][0], font=FONT)
         # Displays text in center of top row
         self.displayed_word.place(relx=0.5, y=0+FONTSIZE, anchor=tk.CENTER)
 
@@ -54,10 +59,28 @@ class FlashcardPage(tk.Frame):
             self, text="Show Word", command=self.show_word_button_clicked)
         self.show_word_button.pack(side=tk.BOTTOM, pady=20)
 
+
     def show_word_button_clicked(self):
         self.displayed_word.configure(
             text=self.word_pair_list[self.word_index][1])
         self.show_word_button.destroy()
+
+        self.button_frame = tk.Frame()
+
+        self.easy_button = tk.Button(self.button_frame, text = "Easy", command = partial(self.answer_button_clicked, "easy")) #Instead of generating these every time - have them show and hide accordingly
+        self.fail_button = tk.Button(self.button_frame, text = "Fail", command = partial(self.answer_button_clicked, "fail"))
+        
+        self.easy_button.pack(side = tk.LEFT)
+        self.fail_button.pack(side = tk.RIGHT)
+
+        self.button_frame.pack(side = tk.BOTTOM)
+
+
+    def answer_button_clicked(self,answer:str):
+
+        print(answer)
+
+
 
 
 if __name__ == "__main__":
