@@ -3,7 +3,7 @@ from functools import partial
 import csv
 
 FONTSIZE = 30
-FONT = ("Verdana", FONTSIZE)
+FONT = ("Helvetica", FONTSIZE)
 
 
 class tkinterUI(tk.Tk):
@@ -91,6 +91,10 @@ class FlashcardPage(tk.Frame):
         with open(file_path,'r') as f:
             csv_reader = csv.reader(f,delimiter=",")
             for row in csv_reader:
+
+                if len(row) == 2:
+                    row.append(0)
+
                 word,translated_word,score = row
                 word_list.append( (word,translated_word,score) )
         
