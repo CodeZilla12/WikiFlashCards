@@ -57,12 +57,18 @@ class FlashcardPage(tk.Frame):
 
         #Initialising Hotkeys
         self.bind("<Escape>", self.kill_program)
+        self.bind("<Control-r>",self.reset_all_scores)
         self.bind("<space>", self.show_word_button_clicked)
         self.bind("z", partial(self.answer_button_clicked, "fail"))
         self.bind("x", partial(self.answer_button_clicked, "hard"))
         self.bind("c", partial(self.answer_button_clicked, "okay"))
         self.bind("v", partial(self.answer_button_clicked, "easy"))
         self.focus_set()    #Focuses current frame so that it can take keypresses
+
+    def reset_all_scores(self,*_):
+        self.word_trans_score_list = [[word,trans,0] for word,trans,score in self.word_trans_score_list]
+        self.write_scores_to_csv(self.WORD_CSV_PATH,self.word_trans_score_list)
+        print("Word scores reset")
 
     @staticmethod
     def get_words_and_scores_from_csv(file_path:str) -> list:
@@ -81,7 +87,7 @@ class FlashcardPage(tk.Frame):
                     row.append(0)
                 
                 word,translated_word,score = row
-                word_list.append( [word,translated_word,int(score)] )
+                word_list.append( [word,translated_word,float(score)] )
         
         return word_list
 
