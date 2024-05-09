@@ -121,7 +121,17 @@ class FlashcardPage(tk.Frame):
         #*_ is to capture keyboard event input.
 
         #In case of function called from hotkey
-        if self.waiting_for_answer or self.word_list_complete:
+        if self.word_list_complete:
+            return
+
+        if self.waiting_for_answer:
+            
+            self.displayed_word.configure(
+            text=self.word_trans_score_list[self.word_index][0])
+    
+            self.button_frame.pack_forget()
+            self.show_word_button.pack(side=tk.BOTTOM, pady=20)
+            self.waiting_for_answer = False
             return
 
         self.waiting_for_answer = True
