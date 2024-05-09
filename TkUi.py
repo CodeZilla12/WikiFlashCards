@@ -46,24 +46,30 @@ class FlashcardPage(tk.Frame):
             ("Vienas", "One"), ("Du", "Two"), ("Trys", "Three")]
         self.word_index = 0
 
-        self.display_next_word()
-
-    
-    def display_next_word(self):
+        #Initialising Initial display widgets
         self.displayed_word = tk.Label(
-            self, text=self.word_pair_list[self.word_index][0], font=FONT)
-        # Displays text in center of top row
+            self,text = self.word_pair_list[self.word_index][0] ,font=FONT)
         self.displayed_word.place(relx=0.5, y=0+FONTSIZE, anchor=tk.CENTER)
 
         self.show_word_button = tk.Button(
             self, text="Show Word", command=self.show_word_button_clicked)
         self.show_word_button.pack(side=tk.BOTTOM, pady=20)
 
+    
+    def display_next_word(self):
+        self.word_index += 1
+
+        _text = self.word_pair_list[self.word_index][0] if self.word_index < len( self.word_pair_list ) else "Complete"
+
+        self.displayed_word.config(text = _text)
+        if _text == "Complete":
+            self.show_word_button.pack_forget()
+
 
     def show_word_button_clicked(self):
         self.displayed_word.configure(
             text=self.word_pair_list[self.word_index][1])
-        self.show_word_button.destroy()
+        self.show_word_button.pack_forget()
 
         self.button_frame = tk.Frame()
 
@@ -78,7 +84,10 @@ class FlashcardPage(tk.Frame):
 
     def answer_button_clicked(self,answer:str):
 
-        print(answer)
+        self.button_frame.pack_forget()
+        self.show_word_button.pack(side=tk.BOTTOM, pady=20)
+        self.display_next_word()
+        
 
 
 
