@@ -139,7 +139,21 @@ class FlashcardPage(tk.Frame):
         if not self.waiting_for_answer or self.word_list_complete:
             return
 
-        self.word_trans_score_list[self.word_index][2] += self.SCORE_VALUE_DICT[answer]
+        current_score = self.word_trans_score_list[self.word_index][2]
+        
+        LOWER_LIMIT = -5
+        UPPER_LIMIT = +5
+        
+        current_score = self.word_trans_score_list[self.word_index][2]
+        bonus_score = self.SCORE_VALUE_DICT[answer]
+        new_score = current_score + bonus_score
+
+        if new_score < LOWER_LIMIT:
+            new_score = LOWER_LIMIT
+        elif new_score > UPPER_LIMIT:
+            new_score = UPPER_LIMIT       
+        
+        self.word_trans_score_list[self.word_index][2] = new_score
 
         self.button_frame.pack_forget()
         self.show_word_button.pack(side=tk.BOTTOM, pady=20)
