@@ -1,7 +1,8 @@
 import tkinter as tk
 from functools import partial
+import csv
 
-FONTSIZE = 20
+FONTSIZE = 30
 FONT = ("Verdana", FONTSIZE)
 
 
@@ -37,21 +38,21 @@ class tkinterUI(tk.Tk):
         frame = self.frame_dict[frame_name]
         frame.tkraise()
 
-
+#Each page class should have its own file probably
 class FlashcardPage(tk.Frame):
     def __init__(self, parent: tk.Frame, controller: tk.Tk):
         tk.Frame.__init__(self, parent)
 
-        self.word_pair_list = [
-            ("Vienas", "One"), ("Du", "Two"), ("Trys", "Three")]
+        WORD_CSV_PATH = "word_scores.csv"
+        self.word_pair_list = self.get_words_and_scores_from_csv(WORD_CSV_PATH)
         self.word_index = 0
         self.waiting_for_answer = False
-
+        self.word_list_complete = False
 
         #Initialising Initial display widgets
         self.displayed_word = tk.Label(
             self,text = self.word_pair_list[self.word_index][0] ,font=FONT)
-        self.displayed_word.place(relx=0.5, y=0+FONTSIZE, anchor=tk.CENTER)
+        self.displayed_word.place(relx=0.5, rely=0.3, anchor=tk.CENTER)
 
         self.show_word_button = tk.Button(
             self, text="Show Word (space)", command=self.show_word_button_clicked)
@@ -63,9 +64,10 @@ class FlashcardPage(tk.Frame):
 
         self.easy_button = tk.Button(self.button_frame, text = "Easy (z)", command = partial(self.answer_button_clicked, "easy")) #Instead of generating these every time - have them show and hide accordingly
         self.hard_button = tk.Button(self.button_frame, text = "Hard (x)", command = partial(self.answer_button_clicked, "hard"))
-        self.okay_button = tk.Button(self.button_frame, text = "Easy (c)", command = partial(self.answer_button_clicked, "okay"))
+        self.okay_button = tk.Button(self.button_frame, text = "Okay (c)", command = partial(self.answer_button_clicked, "okay"))
         self.fail_button = tk.Button(self.button_frame, text = "Fail (v)", command = partial(self.answer_button_clicked, "fail"))
         
+        #Packs buttons into button_frame side-by-side
         self.easy_button.pack(side = tk.LEFT)
         self.hard_button.pack(side = tk.RIGHT)
         self.okay_button.pack(side = tk.RIGHT)
@@ -80,23 +82,40 @@ class FlashcardPage(tk.Frame):
         self.bind("v", partial(self.answer_button_clicked, "easy"))
         self.focus_set()    #Focuses current frame so that it can take keypresses
     
+    @staticmethod
+    def get_words_and_scores_from_csv(file_path:str):
+
+        #Items are stored in the csv as:
+        #word,score[/n]word,score[\n]....
+        word_list = []
+        with open(file_path,'r') as f:
+            csv_reader = csv.reader(f,delimiter=",")
+            for row in csv_reader:
+                word,translated_word,score = row
+                word_list.append( (word,translated_word,score) )
+        
+        return word_list
+
+            
+
 
     def display_next_word(self):
         self.word_index += 1
 
-        _text = self.word_pair_list[self.word_index][0] if self.word_index < len( self.word_pair_list ) else "Complete"
-
-        self.displayed_word.config(text = _text)
-        if _text == "Complete":
+        if self.word_index >= len( self.word_pair_list ):
+            self.word_list_complete = True
+            self.displayed_word.config(text= "Complete")
             self.show_word_button.pack_forget()
-
+            return
+        
+        self.displayed_word.config(text = self.word_pair_list[self.word_index][0])
 
     def show_word_button_clicked(self, *_):
 
         #*_ is to capture keyboard event input.
 
         #In case of function called from hotkey
-        if self.waiting_for_answer:
+        if self.waiting_for_answer or self.word_list_complete:
             return
 
         self.waiting_for_answer = True
@@ -104,15 +123,14 @@ class FlashcardPage(tk.Frame):
             text=self.word_pair_list[self.word_index][1])
         self.show_word_button.pack_forget()
 
-        self.button_frame.pack(side = tk.BOTTOM)
-
+        self.button_frame.pack(side = tk.BOTTOM, pady="10px")
 
     def answer_button_clicked(self,answer:str, *_):
 
         #*_ is to capture keyboard event input.
 
         #In case of function called from hotkey
-        if not self.waiting_for_answer:
+        if not self.waiting_for_answer or self.word_list_complete:
             return
 
         self.button_frame.pack_forget()
