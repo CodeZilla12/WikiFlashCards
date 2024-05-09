@@ -3,85 +3,26 @@
 # go over data -> clean it up. Ensure only valid LT words.
 # package words with english translation
 
-import requests
-from bs4 import BeautifulSoup
+from words_from_wiki import get_words_from_articles
+
 from tqdm import tqdm
 import googletrans
 import time
 
-def grab_links_in_article(url: str) -> list:
-    page = requests.get(url)
-    soup = BeautifulSoup(page.content, 'html.parser')
-    try:
-        all_links = [link.get('href') for link in soup.find(id="bodyContent").find_all("a") if link.get('href')]
-        all_links = [i for i in all_links if '/wiki/' in i and '://' not in i]
-    except AttributeError:
-        print(f"No links found at {url}!")
-        return []
-
-
-    return all_links
-
-
-def get_article_text(url: str) -> str:
-    page = requests.get(url)
-
-    soup = BeautifulSoup(page.content, 'html.parser')
-
-    #maybe check if successful connection here. Example of bad connection: https://lt.wikipedia.org/commons.wikimedia.org/wiki/File:Flag_of_Mongolia_(construction_sheet).svg
-
-    try:
-        article_text = "".join([x.text for x in soup.find(id="bodyContent").find_all('p')]).upper() #improve this to be more selective
-        article_text = "".join([i for i in article_text if i.isalpha() or i == " "]).replace("  ", " ").replace("  ", " ")
-    except AttributeError:
-        print(f"No text found at {url}!")
-        return ""
-
-
-    return article_text
-
-
-def parse_and_store_article(collection: dict, article_text: str) -> dict:
-    for word in article_text.split(" "):
-        if collection.get(word):
-            collection[word] += 1  # counts number of occurrences of any given word to track most common
-        else:
-            collection[word] = 1
-    return collection
-
-
-word_collection = {}
-link_lst = []
-
 root = "https://lt.wikipedia.org"
 SEED_LINK = "https://lt.wikipedia.org/wiki/Taryb%C5%B3_S%C4%85junga"
+SEARCH_DEPTH = 1
 
-word_collection = parse_and_store_article(word_collection, get_article_text(SEED_LINK))
+word_dict = get_words_from_articles(SEED_LINK,SEARCH_DEPTH)
 
-SEARCH_DEPTH = 50
-MAX_LINKS_PER_ARTICLE = 10
-link_lst.extend(grab_links_in_article(SEED_LINK)) #do first pass of link grabbing from zeroth link
-link_lst = list(set(link_lst))  # remove any duplicate links
+sorted_words = sorted(word_dict, key=word_dict.get) #https://stackoverflow.com/questions/12987178/sort-a-list-based-on-dictionary-values-in-python
 
-#need a more recursive/async approach to list searching so that it's less prone to crashing due to bad links.
-
-for _ in range(SEARCH_DEPTH):
-    new_links = []
-    for c,path_ext in enumerate( tqdm(link_lst, leave=False) ): #doesn't check if links have been seen before
-        current_url = root + path_ext
-        word_collection = parse_and_store_article(word_collection, get_article_text(current_url))
-        new_links.extend(grab_links_in_article(current_url))
-
-        if (c == MAX_LINKS_PER_ARTICLE):
-            break
-
-    link_lst = list(set(new_links)) #???
-    link_lst = new_links
-
-sorted_words = sorted(word_collection, key=word_collection.get) #https://stackoverflow.com/questions/12987178/sort-a-list-based-on-dictionary-values-in-python
-
-lt_alphabet = set("ertyuiopasdfghjklzxcvbnmąčęėįšųūž".upper())
+lt_alphabet = set("ertyuiopasdfghjklzxcvbnmąčęėįšųūž".upper()) #missing key letters
 sorted_words = [i for i in sorted_words if set(i).issubset(lt_alphabet)] #filters out russian, greek alphabets etc.
+
+print(sorted_words)
+
+quit()
 
 #Notes on translate api
 #The maximum character limit on a single text is 15k https://py-googletrans.readthedocs.io/en/latest/
