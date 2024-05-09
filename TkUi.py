@@ -45,6 +45,8 @@ class FlashcardPage(tk.Frame):
         self.word_pair_list = [
             ("Vienas", "One"), ("Du", "Two"), ("Trys", "Three")]
         self.word_index = 0
+        self.waiting_for_answer = False
+
 
         #Initialising Initial display widgets
         self.displayed_word = tk.Label(
@@ -52,9 +54,24 @@ class FlashcardPage(tk.Frame):
         self.displayed_word.place(relx=0.5, y=0+FONTSIZE, anchor=tk.CENTER)
 
         self.show_word_button = tk.Button(
-            self, text="Show Word", command=self.show_word_button_clicked)
+            self, text="Show Word (space)", command=self.show_word_button_clicked)
         self.show_word_button.pack(side=tk.BOTTOM, pady=20)
 
+
+        #Initialising answering widgets
+        self.button_frame = tk.Frame()
+
+        self.easy_button = tk.Button(self.button_frame, text = "Easy (z)", command = partial(self.answer_button_clicked, "easy")) #Instead of generating these every time - have them show and hide accordingly
+        self.fail_button = tk.Button(self.button_frame, text = "Fail (v)", command = partial(self.answer_button_clicked, "fail"))
+        
+        self.easy_button.pack(side = tk.LEFT)
+        self.fail_button.pack(side = tk.RIGHT)
+
+        #Initialising Hotkeys
+        self.bind("<space>", self.show_word_button_clicked)
+        self.bind("z", partial(self.answer_button_clicked, "fail"))
+        self.bind("v", partial(self.answer_button_clicked, "easy"))
+        self.focus_set()    #Focuses current frame so that it can take keypresses
     
     def display_next_word(self):
         self.word_index += 1
@@ -66,28 +83,34 @@ class FlashcardPage(tk.Frame):
             self.show_word_button.pack_forget()
 
 
-    def show_word_button_clicked(self):
+    def show_word_button_clicked(self, *_):
+
+        #*_ is to capture keyboard event input.
+
+        #In case of function called from hotkey
+        if self.waiting_for_answer:
+            return
+
+        self.waiting_for_answer = True
         self.displayed_word.configure(
             text=self.word_pair_list[self.word_index][1])
         self.show_word_button.pack_forget()
 
-        self.button_frame = tk.Frame()
-
-        self.easy_button = tk.Button(self.button_frame, text = "Easy", command = partial(self.answer_button_clicked, "easy")) #Instead of generating these every time - have them show and hide accordingly
-        self.fail_button = tk.Button(self.button_frame, text = "Fail", command = partial(self.answer_button_clicked, "fail"))
-        
-        self.easy_button.pack(side = tk.LEFT)
-        self.fail_button.pack(side = tk.RIGHT)
-
         self.button_frame.pack(side = tk.BOTTOM)
 
 
-    def answer_button_clicked(self,answer:str):
+    def answer_button_clicked(self,answer:str, *_):
+
+        #*_ is to capture keyboard event input.
+
+        #In case of function called from hotkey
+        if not self.waiting_for_answer:
+            return
 
         self.button_frame.pack_forget()
         self.show_word_button.pack(side=tk.BOTTOM, pady=20)
         self.display_next_word()
-        
+        self.waiting_for_answer = False
 
 
 
