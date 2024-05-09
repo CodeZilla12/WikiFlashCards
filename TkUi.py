@@ -67,6 +67,8 @@ class FlashcardPage(tk.Frame):
         self.fail_button = tk.Button(self.button_frame, text = "Fail (v)", command = partial(self.answer_button_clicked, "fail"))
         
         self.easy_button.pack(side = tk.LEFT)
+        self.hard_button.pack(side = tk.RIGHT)
+        self.okay_button.pack(side = tk.RIGHT)
         self.fail_button.pack(side = tk.RIGHT)
 
 
@@ -78,7 +80,7 @@ class FlashcardPage(tk.Frame):
         self.bind("v", partial(self.answer_button_clicked, "easy"))
         self.focus_set()    #Focuses current frame so that it can take keypresses
     
-    
+
     def display_next_word(self):
         self.word_index += 1
 
