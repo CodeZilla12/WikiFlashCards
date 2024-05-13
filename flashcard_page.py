@@ -2,9 +2,15 @@ import tkinter as tk
 from functools import partial
 import csv
 from os.path import isfile
+import configparser
 
 FONTSIZE = 30
 FONT = ("Helvetica", FONTSIZE)
+
+# Initialises the config and reads "flashcard-config.cfg" file contents into memory.
+FLASHCARD_CFG_PATH = "flashcard-config.cfg"
+CONFIG_OBJECT = configparser.ConfigParser()
+CONFIG_OBJECT.read(FLASHCARD_CFG_PATH)
 
 
 class FlashcardPage(tk.Frame):
