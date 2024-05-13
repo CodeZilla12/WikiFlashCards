@@ -3,6 +3,8 @@ from functools import partial
 import csv
 from os.path import isfile
 import configparser
+from random import choices
+import numpy as np
 
 FONTSIZE = 30
 FONT = ("Helvetica", FONTSIZE)
@@ -20,9 +22,37 @@ class FlashcardPage(tk.Frame):
         self.controller = controller
 
         self.WORD_CSV_PATH = "word_scores.csv"
-        self.word_trans_score_list = self.get_words_and_scores_from_csv(
+        temp_word_trans_score_list = self.get_words_and_scores_from_csv(
             self.WORD_CSV_PATH)
+
+        _abs_lower_score_limit = abs(float(
+            CONFIG_OBJECT["FlashCard-Preferences"]["lower_score_limit"]))
+
+        _k = k = int(
+            CONFIG_OBJECT["FlashCard-Preferences"]["words_per_session"])
+        _list = []
+
+        while len(_list) < _k:
+            # Weighted such that scores approaching the lower score limit are significantly more likely to appear,
+            # the +1 mitigates any divide by zero errors as scores lower than the negative shouldn't be possible.
+            _weights = [1/(score+1+_abs_lower_score_limit) for _,
+                        _, score in temp_word_trans_score_list]
+
+            _word_list = choices(temp_word_trans_score_list,
+                                 weights=_weights, k=2*_k)
+
+            temp_word_trans_score_list = [
+                i for i in temp_word_trans_score_list if i not in _list]
+
+            _unique_words = np.unique(_word_list, axis=0).tolist()
+
+            _list.extend(_unique_words)
+
+            continue
+
+        self.word_trans_score_list = _list
         self.word_index = 0
+
         self.waiting_for_answer = False
         self.word_list_complete = False
 
@@ -78,7 +108,7 @@ class FlashcardPage(tk.Frame):
             self.WORD_CSV_PATH, self.word_trans_score_list)
         print("Word scores reset")
 
-    @staticmethod
+    @ staticmethod
     def get_words_and_scores_from_csv(file_path: str) -> list:
 
         # Items are stored in the csv as:
@@ -103,8 +133,12 @@ class FlashcardPage(tk.Frame):
 
         return word_list
 
-    @staticmethod
+    @ staticmethod
     def write_scores_to_csv(file_path: str, word_trans_score_list: list) -> None:
+
+        # rewrite this so it only changes the words that are supplied in word_trans_score_list
+        return
+
         with open(file_path, 'w', encoding="utf-8") as f:
             csv_writer = csv.writer(f, delimiter=",", lineterminator="\n")
 
@@ -168,11 +202,14 @@ class FlashcardPage(tk.Frame):
 
         current_score = self.word_trans_score_list[self.word_index][2]
 
-        LOWER_LIMIT = -5
-        UPPER_LIMIT = +5
+        LOWER_LIMIT = float(
+            CONFIG_OBJECT["FlashCard-Preferences"]["lower_score_limit"])
+        UPPER_LIMIT = float(
+            CONFIG_OBJECT["FlashCard-Preferences"]["upper_score_limit"])
 
         current_score = self.word_trans_score_list[self.word_index][2]
         bonus_score = self.SCORE_VALUE_DICT[answer]
+
         new_score = current_score + bonus_score
 
         if new_score < LOWER_LIMIT:
