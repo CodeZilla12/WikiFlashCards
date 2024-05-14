@@ -169,9 +169,13 @@ class FlashcardPage(tk.Frame):
             self.WORD_CSV_PATH, self.word_trans_score_list)
 
         if self.word_index >= len(self.word_trans_score_list):
+
+            # Here switch to the graph page.
+
             self.word_list_complete = True
             self.displayed_word.config(text="Complete")
             self.show_word_button.pack_forget()
+
             return
 
         self.displayed_word.config(
