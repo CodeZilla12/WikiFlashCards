@@ -19,17 +19,20 @@ class tkinterUI(tk.Tk):
         frame_container.grid_rowconfigure(0, weight=1)
         frame_container.grid_columnconfigure(0, weight=1)
 
-        self.frame_dict = {}
+        self.frame_dict = {"FlashcardPage": FlashcardPage}
 
         # All frames are rendered at all times, just 'focused' as needed.
         # Definitely not the best way to do this, just a prototype.
-        for FRAME in [FlashcardPage, GraphPage]:
+        for frame_name in self.frame_dict.keys():
+
+            FRAME = self.frame_dict[frame_name]
+
             _frame = FRAME(frame_container, self)
 
-            self.frame_dict[FRAME] = _frame
+            self.frame_dict[frame_name] = _frame
             _frame.grid(row=0, column=0, sticky="nsew")
 
-        self.show_frame(GraphPage)
+        self.show_frame("FlashcardPage")
 
     def show_frame(self, frame_name):
 
