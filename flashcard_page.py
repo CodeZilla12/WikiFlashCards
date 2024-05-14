@@ -44,11 +44,13 @@ class FlashcardPage(tk.Frame):
             temp_word_trans_score_list = [
                 i for i in temp_word_trans_score_list if i not in _list]
 
-            _unique_words = np.unique(_word_list, axis=0).tolist()
+            # Used np.unique as set() doesn't work on lists
+            _unique_words = np.unique(_word_list, axis=0)
+
+            _unique_words = [
+                [word, trans, float(score)] for word, trans, score in _unique_words]  # np arrays have to have homogenous type, so they convert score to string. This reverses that.
 
             _list.extend(_unique_words)
-
-            continue
 
         self.word_trans_score_list = _list
         self.word_index = 0
@@ -209,6 +211,8 @@ class FlashcardPage(tk.Frame):
 
         current_score = self.word_trans_score_list[self.word_index][2]
         bonus_score = self.SCORE_VALUE_DICT[answer]
+
+        print(current_score, type(current_score))
 
         new_score = current_score + bonus_score
 
