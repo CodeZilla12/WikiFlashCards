@@ -1,6 +1,8 @@
 import tkinter as tk
 import csv
 import configparser
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 FLASHCARD_CFG_PATH = "flashcard-config.cfg"
 CONFIG_OBJECT = configparser.ConfigParser()
@@ -14,6 +16,14 @@ class GraphPage(tk.Frame):
         tk.Frame.__init__(self, parent)
 
         self.controller = controller
+
+        self.fig, self.ax = plt.subplots()
+
+        x, y = self.get_plot_data()
+
+        canvas = FigureCanvasTkAgg(self.fig, master=self)
+        canvas.draw()
+        canvas.get_tk_widget().pack()
 
     @ staticmethod
     def get_words_and_scores_from_csv(file_path: str) -> list:
