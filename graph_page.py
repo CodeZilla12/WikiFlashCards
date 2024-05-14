@@ -12,7 +12,6 @@ CONFIG_OBJECT.read(FLASHCARD_CFG_PATH)
 
 class GraphPage(tk.Frame):
 
-    # Long __init__. Needs refactor?
     def __init__(self, parent: tk.Frame, controller: tk.Tk):
         tk.Frame.__init__(self, parent)
 
@@ -42,6 +41,15 @@ class GraphPage(tk.Frame):
         canvas = FigureCanvasTkAgg(self.fig, master=self)
         canvas.draw()
         canvas.get_tk_widget().pack()
+
+        self.bind("<Escape>", self.kill_program)
+        self.focus_set()  # Focuses current frame so that it can take keypresses
+
+    def kill_program(self, *_):
+        # Should move this into controller to reduce repeated code
+        print("Ending Program...")
+
+        self.controller.destroy()
 
     @ staticmethod
     def get_words_and_scores_from_csv(file_path: str) -> list:
