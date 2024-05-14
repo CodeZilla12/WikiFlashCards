@@ -1,6 +1,8 @@
 import tkinter as tk
-#from tkinter import ttk
+# from tkinter import ttk
 from flashcard_page import FlashcardPage
+from graph_page import GraphPage
+
 
 class tkinterUI(tk.Tk):
 
@@ -21,7 +23,7 @@ class tkinterUI(tk.Tk):
 
         # All frames are rendered at all times, just 'focused' as needed.
         # Definitely not the best way to do this, just a prototype.
-        for FRAME in [FlashcardPage]:
+        for FRAME in [FlashcardPage, GraphPage]:
             _frame = FRAME(frame_container, self)
 
             self.frame_dict[FRAME] = _frame
