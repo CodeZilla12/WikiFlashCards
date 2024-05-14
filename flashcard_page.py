@@ -16,6 +16,8 @@ CONFIG_OBJECT.read(FLASHCARD_CFG_PATH)
 
 
 class FlashcardPage(tk.Frame):
+
+    # Long __init__. Needs refactor?
     def __init__(self, parent: tk.Frame, controller: tk.Tk):
         tk.Frame.__init__(self, parent)
 
