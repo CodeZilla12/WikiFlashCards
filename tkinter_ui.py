@@ -29,7 +29,7 @@ class tkinterUI(tk.Tk):
             self.frame_dict[FRAME] = _frame
             _frame.grid(row=0, column=0, sticky="nsew")
 
-        self.show_frame(FlashcardPage)
+        self.show_frame(GraphPage)
 
     def show_frame(self, frame_name):
 
