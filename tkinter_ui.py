@@ -14,30 +14,24 @@ class tkinterUI(tk.Tk):
 
         self.geometry(f"{self.width}x{self.height}")
 
-        frame_container = tk.Frame(self)
-        frame_container.pack(side="top", fill="both", expand=True)
-        frame_container.grid_rowconfigure(0, weight=1)
-        frame_container.grid_columnconfigure(0, weight=1)
+        self.frame_container = tk.Frame(self)
+        self.frame_container.pack(side="top", fill="both", expand=True)
+        self.frame_container.grid_rowconfigure(0, weight=1)
+        self.frame_container.grid_columnconfigure(0, weight=1)
 
-        self.frame_dict = {"FlashcardPage": FlashcardPage}
-
-        # All frames are rendered at all times, just 'focused' as needed.
-        # Definitely not the best way to do this, just a prototype.
-        for frame_name in self.frame_dict.keys():
-
-            FRAME = self.frame_dict[frame_name]
-
-            _frame = FRAME(frame_container, self)
-
-            self.frame_dict[frame_name] = _frame
-            _frame.grid(row=0, column=0, sticky="nsew")
-
+        self.frame_dict = {
+            "FlashcardPage": FlashcardPage, "GraphPage": GraphPage}
         self.show_frame("FlashcardPage")
 
     def show_frame(self, frame_name):
+        self.clear_frame(self.frame_container)
 
-        frame = self.frame_dict[frame_name]
-        frame.tkraise()
+        frame = self.frame_dict[frame_name](self.frame_container, self)
+        frame.grid(sticky="nsew")
+
+    def clear_frame(self, frame):
+        for widget in frame.winfo_children():
+            widget.destroy()
 
 
 if __name__ == "__main__":
