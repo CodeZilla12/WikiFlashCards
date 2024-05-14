@@ -2,6 +2,7 @@ import tkinter as tk
 # from tkinter import ttk
 from flashcard_page import FlashcardPage
 from graph_page import GraphPage
+from home_page import HomePage
 
 
 class tkinterUI(tk.Tk):
@@ -20,8 +21,8 @@ class tkinterUI(tk.Tk):
         self.frame_container.grid_columnconfigure(0, weight=1)
 
         self.frame_dict = {
-            "FlashcardPage": FlashcardPage, "GraphPage": GraphPage}
-        self.show_frame("FlashcardPage")
+            "HomePage": HomePage, "FlashcardPage": FlashcardPage, "GraphPage": GraphPage}
+        self.show_frame("HomePage")
 
     def show_frame(self, frame_name):
         self.clear_frame(self.frame_container)
