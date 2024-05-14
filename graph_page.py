@@ -3,6 +3,7 @@ import csv
 import configparser
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from os.path import isfile
 
 FLASHCARD_CFG_PATH = "flashcard-config.cfg"
 CONFIG_OBJECT = configparser.ConfigParser()
@@ -19,7 +20,24 @@ class GraphPage(tk.Frame):
 
         self.fig, self.ax = plt.subplots()
 
-        x, y = self.get_plot_data()
+        score_data = [int(scores) for word, trans,
+                      scores in self.get_words_and_scores_from_csv("word_scores.csv")]
+
+        x_max = float(
+            CONFIG_OBJECT["FlashCard-Preferences"]["upper_score_limit"])
+        x_min = float(
+            CONFIG_OBJECT["FlashCard-Preferences"]["lower_score_limit"])
+
+        self.ax.set_title(
+            "Histogram - Progress for Selected Set")
+
+        self.ax.hist(score_data, range=(x_min, x_max),
+                     align="mid", facecolor="grey", rwidth=0.9)
+        self.ax.set_xticks([i for i in range(int(x_min), int(x_max)+1)])
+        self.ax.yaxis.get_major_locator().set_params(integer=True)
+
+        self.ax.set_xlabel("Score", size=12)
+        self.ax.set_ylabel("Frequency", size=12)
 
         canvas = FigureCanvasTkAgg(self.fig, master=self)
         canvas.draw()
