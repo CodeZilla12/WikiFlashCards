@@ -52,7 +52,8 @@ class FlashcardPage(tk.Frame):
 
             _list.extend(_unique_words)
 
-        self.word_trans_score_list = _list
+        # The while loop can introduce extra words, this cuts it off at the maximum defined in config
+        self.word_trans_score_list = _list[:_k]
         self.word_index = 0
 
         self.waiting_for_answer = False
@@ -135,16 +136,23 @@ class FlashcardPage(tk.Frame):
 
         return word_list
 
-    @ staticmethod
-    def write_scores_to_csv(file_path: str, word_trans_score_list: list) -> None:
+    def write_scores_to_csv(self, file_path: str, word_trans_score_list: list) -> None:
 
-        # rewrite this so it only changes the words that are supplied in word_trans_score_list
-        return
+        csv_word_trans_score_list = self.get_words_and_scores_from_csv(
+            file_path)
+
+        # Change this so that it only updates scores which have changed from the csv
+        for word, trans, score in word_trans_score_list:
+            for i, n in enumerate(csv_word_trans_score_list):
+                csv_word, _, _ = n
+                if csv_word == word:
+                    # update csv items of only selected words
+                    csv_word_trans_score_list[i] = [word, trans, score]
 
         with open(file_path, 'w', encoding="utf-8") as f:
             csv_writer = csv.writer(f, delimiter=",", lineterminator="\n")
 
-            csv_writer.writerows(word_trans_score_list)
+            csv_writer.writerows(csv_word_trans_score_list)
 
     def kill_program(self, *_):
 
@@ -157,8 +165,6 @@ class FlashcardPage(tk.Frame):
 
         self.write_scores_to_csv(
             self.WORD_CSV_PATH, self.word_trans_score_list)
-
-        # print("Saved Score")
 
         if self.word_index >= len(self.word_trans_score_list):
             self.word_list_complete = True
@@ -211,8 +217,6 @@ class FlashcardPage(tk.Frame):
 
         current_score = self.word_trans_score_list[self.word_index][2]
         bonus_score = self.SCORE_VALUE_DICT[answer]
-
-        print(current_score, type(current_score))
 
         new_score = current_score + bonus_score
 
