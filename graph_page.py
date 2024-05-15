@@ -4,6 +4,7 @@ import configparser
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from os.path import isfile, join
+from utils import get_words_and_scores_from_csv
 
 
 class GraphPage(tk.Frame):
@@ -25,15 +26,18 @@ class GraphPage(tk.Frame):
         selected_csv = join(selected_folder, selected_csv_name)
 
         score_data = [int(scores) for word, trans,
-                      scores in self.get_words_and_scores_from_csv(selected_csv)]
+                      scores in get_words_and_scores_from_csv(selected_csv)]
 
         x_max = float(
             self.CONFIG_OBJECT["FlashCard-Preferences"]["upper_score_limit"])
         x_min = float(
             self.CONFIG_OBJECT["FlashCard-Preferences"]["lower_score_limit"])
 
+        selected_flashcard_set = self.CONFIG_OBJECT["Variables"]["selected-flashcard-file"].split(".")[
+            0]
+
         self.ax.set_title(
-            "Histogram - Progress for Selected Set")
+            "Histogram - Progress for " + selected_flashcard_set)
 
         self.ax.hist(score_data, range=(x_min, x_max),
                      align="mid", facecolor="grey", rwidth=0.9)
@@ -56,30 +60,3 @@ class GraphPage(tk.Frame):
 
         self.controller.destroy()
         quit()
-
-    @ staticmethod
-    def get_words_and_scores_from_csv(file_path: str) -> list:
-
-        # This should be moved to an external utilities function as it will likely be used in many places.
-
-        # Items are stored in the csv as:
-        # word, trans, score[/n]word,trans,score[\n]....
-        word_list = []
-
-        if not isfile(file_path):
-            raise FileNotFoundError("word_scores.csv missing")
-
-        with open(file_path, 'r', encoding="utf8") as f:
-            csv_reader = csv.reader(f, delimiter=",")
-            for row in csv_reader:
-
-                if len(row) == 0:
-                    continue
-
-                if len(row) == 2:  # Make this check more specific
-                    row.append(0)
-
-                word, translated_word, score = row
-                word_list.append([word, translated_word, float(score)])
-
-        return word_list
