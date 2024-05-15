@@ -30,8 +30,6 @@ class FlashcardPage(tk.Frame):
         temp_word_trans_score_list = self.get_words_and_scores_from_csv(
             self.WORD_CSV_PATH)
 
-        print(temp_word_trans_score_list)
-
         _abs_lower_score_limit = abs(float(
             self.CONFIG_OBJECT["FlashCard-Preferences"]["lower_score_limit"]))
 
