@@ -9,11 +9,6 @@ import numpy as np
 FONTSIZE = 30
 FONT = ("Helvetica", FONTSIZE)
 
-# Initialises the config and reads "flashcard-config.cfg" file contents into memory.
-FLASHCARD_CFG_PATH = "flashcard-config.cfg"
-CONFIG_OBJECT = configparser.ConfigParser()
-CONFIG_OBJECT.read(FLASHCARD_CFG_PATH)
-
 
 class FlashcardPage(tk.Frame):
 
@@ -23,19 +18,29 @@ class FlashcardPage(tk.Frame):
 
         self.controller = controller
 
-        flashcard_folder = CONFIG_OBJECT["Variables"]["flashcard-folder"]
-        flashcard_csv_name = CONFIG_OBJECT["Variables"]["selected-flashcard-file"]
+        self.FLASHCARD_CFG_PATH = "flashcard-config.cfg"
+        self.CONFIG_OBJECT = configparser.ConfigParser()
+        self.CONFIG_OBJECT.read(self.FLASHCARD_CFG_PATH)
+
+        flashcard_folder = self.CONFIG_OBJECT["Variables"]["flashcard-folder"]
+        flashcard_csv_name = self.CONFIG_OBJECT["Variables"]["selected-flashcard-file"]
 
         self.WORD_CSV_PATH = join(flashcard_folder, flashcard_csv_name)
 
         temp_word_trans_score_list = self.get_words_and_scores_from_csv(
             self.WORD_CSV_PATH)
 
+        print(temp_word_trans_score_list)
+
         _abs_lower_score_limit = abs(float(
-            CONFIG_OBJECT["FlashCard-Preferences"]["lower_score_limit"]))
+            self.CONFIG_OBJECT["FlashCard-Preferences"]["lower_score_limit"]))
 
         _k = k = int(
-            CONFIG_OBJECT["FlashCard-Preferences"]["words_per_session"])
+            self.CONFIG_OBJECT["FlashCard-Preferences"]["words_per_session"])
+
+        if len(temp_word_trans_score_list) < _k:
+            _k = len(temp_word_trans_score_list)
+
         _list = []
 
         while len(_list) < _k:
@@ -165,6 +170,7 @@ class FlashcardPage(tk.Frame):
         print("Ending Program...")
 
         self.controller.destroy()
+        quit()
 
     def display_next_word(self):
         self.word_index += 1
@@ -222,9 +228,9 @@ class FlashcardPage(tk.Frame):
         current_score = self.word_trans_score_list[self.word_index][2]
 
         LOWER_LIMIT = float(
-            CONFIG_OBJECT["FlashCard-Preferences"]["lower_score_limit"])
+            self.CONFIG_OBJECT["FlashCard-Preferences"]["lower_score_limit"])
         UPPER_LIMIT = float(
-            CONFIG_OBJECT["FlashCard-Preferences"]["upper_score_limit"])
+            self.CONFIG_OBJECT["FlashCard-Preferences"]["upper_score_limit"])
 
         current_score = self.word_trans_score_list[self.word_index][2]
         bonus_score = self.SCORE_VALUE_DICT[answer]
