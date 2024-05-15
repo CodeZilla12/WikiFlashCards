@@ -5,10 +5,6 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from os.path import isfile, join
 
-FLASHCARD_CFG_PATH = "flashcard-config.cfg"
-CONFIG_OBJECT = configparser.ConfigParser()
-CONFIG_OBJECT.read(FLASHCARD_CFG_PATH)
-
 
 class GraphPage(tk.Frame):
 
@@ -17,10 +13,14 @@ class GraphPage(tk.Frame):
 
         self.controller = controller
 
+        self.FLASHCARD_CFG_PATH = "flashcard-config.cfg"
+        self.CONFIG_OBJECT = configparser.ConfigParser()
+        self.CONFIG_OBJECT.read(self.FLASHCARD_CFG_PATH)
+
         self.fig, self.ax = plt.subplots()
 
-        selected_folder = CONFIG_OBJECT["Variables"]["flashcard-folder"]
-        selected_csv_name = CONFIG_OBJECT["Variables"]["selected-flashcard-file"]
+        selected_folder = self.CONFIG_OBJECT["Variables"]["flashcard-folder"]
+        selected_csv_name = self.CONFIG_OBJECT["Variables"]["selected-flashcard-file"]
 
         selected_csv = join(selected_folder, selected_csv_name)
 
@@ -28,9 +28,9 @@ class GraphPage(tk.Frame):
                       scores in self.get_words_and_scores_from_csv(selected_csv)]
 
         x_max = float(
-            CONFIG_OBJECT["FlashCard-Preferences"]["upper_score_limit"])
+            self.CONFIG_OBJECT["FlashCard-Preferences"]["upper_score_limit"])
         x_min = float(
-            CONFIG_OBJECT["FlashCard-Preferences"]["lower_score_limit"])
+            self.CONFIG_OBJECT["FlashCard-Preferences"]["lower_score_limit"])
 
         self.ax.set_title(
             "Histogram - Progress for Selected Set")
@@ -55,6 +55,7 @@ class GraphPage(tk.Frame):
         print("Ending Program...")
 
         self.controller.destroy()
+        quit()
 
     @ staticmethod
     def get_words_and_scores_from_csv(file_path: str) -> list:
