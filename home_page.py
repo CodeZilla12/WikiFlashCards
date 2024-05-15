@@ -3,10 +3,6 @@ import configparser
 from os.path import join
 from os import listdir
 
-FLASHCARD_CFG_PATH = "flashcard-config.cfg"
-CONFIG_OBJECT = configparser.ConfigParser()
-CONFIG_OBJECT.read(FLASHCARD_CFG_PATH)
-
 
 class HomePage(tk.Frame):
 
@@ -15,13 +11,17 @@ class HomePage(tk.Frame):
 
         self.controller = controller
 
+        self.FLASHCARD_CFG_PATH = "flashcard-config.cfg"
+        self.CONFIG_OBJECT = configparser.ConfigParser()
+        self.CONFIG_OBJECT.read(self.FLASHCARD_CFG_PATH)
+
         label = tk.Label(self, text="FlashcardFile")
         label.grid(row=0, column=0)
 
         self.selected_file_tkstring = tk.StringVar(self)
 
-        flashcard_file_folder = CONFIG_OBJECT["Variables"]["flashcard-folder"]
-        selected_flashcard_file_path = CONFIG_OBJECT["Variables"]["selected-flashcard-file"]
+        flashcard_file_folder = self.CONFIG_OBJECT["Variables"]["flashcard-folder"]
+        selected_flashcard_file_path = self.CONFIG_OBJECT["Variables"]["selected-flashcard-file"]
         self.selected_file_tkstring.set(selected_flashcard_file_path)
 
         flashcard_file_list = listdir(flashcard_file_folder)
@@ -41,7 +41,7 @@ class HomePage(tk.Frame):
     def on_new_flashcard_file_selected(self, _):
         new_flashcard_file_name = self.selected_file_tkstring.get()
 
-        CONFIG_OBJECT["Variables"]["selected-flashcard-file"] = new_flashcard_file_name
+        self.CONFIG_OBJECT["Variables"]["selected-flashcard-file"] = new_flashcard_file_name
 
-        with open("flashcard-config.cfg", "w") as f:
-            CONFIG_OBJECT.write(f)
+        with open(self.FLASHCARD_CFG_PATH, "w") as f:
+            self.CONFIG_OBJECT.write(f)
