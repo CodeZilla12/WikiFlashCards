@@ -5,6 +5,7 @@ from os.path import isfile, join
 import configparser
 from random import choices
 import numpy as np
+from utils import get_words_and_scores_from_csv, write_scores_to_csv
 
 FONTSIZE = 30
 FONT = ("Helvetica", FONTSIZE)
@@ -27,7 +28,7 @@ class FlashcardPage(tk.Frame):
 
         self.WORD_CSV_PATH = join(flashcard_folder, flashcard_csv_name)
 
-        temp_word_trans_score_list = self.get_words_and_scores_from_csv(
+        temp_word_trans_score_list = get_words_and_scores_from_csv(
             self.WORD_CSV_PATH)
 
         _abs_lower_score_limit = abs(float(
@@ -114,54 +115,13 @@ class FlashcardPage(tk.Frame):
         self.focus_set()  # Focuses current frame so that it can take keypresses
 
     def reset_all_scores(self, *_):
+
+        # rewrite this to redo all scores from csv instead of only selected x scores
         self.word_trans_score_list = [[word, trans, 0]
                                       for word, trans, score in self.word_trans_score_list]
-        self.write_scores_to_csv(
+        write_scores_to_csv(
             self.WORD_CSV_PATH, self.word_trans_score_list)
         print("Word scores reset")
-
-    @ staticmethod
-    def get_words_and_scores_from_csv(file_path: str) -> list:
-
-        # Items are stored in the csv as:
-        # word,score[/n]word,score[\n]....
-        word_list = []
-
-        if not isfile(file_path):
-            raise FileNotFoundError("word_scores missing")
-
-        with open(file_path, 'r', encoding="utf8") as f:
-            csv_reader = csv.reader(f, delimiter=",")
-            for row in csv_reader:
-
-                if len(row) == 0:
-                    continue
-
-                if len(row) == 2:  # Make this check more specific
-                    row.append(0)
-
-                word, translated_word, score = row
-                word_list.append([word, translated_word, float(score)])
-
-        return word_list
-
-    def write_scores_to_csv(self, file_path: str, word_trans_score_list: list) -> None:
-
-        csv_word_trans_score_list = self.get_words_and_scores_from_csv(
-            file_path)
-
-        # Change this so that it only updates scores which have changed from the csv
-        for word, trans, score in word_trans_score_list:
-            for i, n in enumerate(csv_word_trans_score_list):
-                csv_word, _, _ = n
-                if csv_word == word:
-                    # update csv items of only selected words
-                    csv_word_trans_score_list[i] = [word, trans, score]
-
-        with open(file_path, 'w', encoding="utf-8") as f:
-            csv_writer = csv.writer(f, delimiter=",", lineterminator="\n")
-
-            csv_writer.writerows(csv_word_trans_score_list)
 
     def kill_program(self, *_):
 
@@ -173,7 +133,7 @@ class FlashcardPage(tk.Frame):
     def display_next_word(self):
         self.word_index += 1
 
-        self.write_scores_to_csv(
+        write_scores_to_csv(
             self.WORD_CSV_PATH, self.word_trans_score_list)
 
         if self.word_index >= len(self.word_trans_score_list):
