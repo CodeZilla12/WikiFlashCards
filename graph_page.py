@@ -3,7 +3,7 @@ import csv
 import configparser
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from os.path import isfile
+from os.path import isfile, join
 
 FLASHCARD_CFG_PATH = "flashcard-config.cfg"
 CONFIG_OBJECT = configparser.ConfigParser()
@@ -19,8 +19,13 @@ class GraphPage(tk.Frame):
 
         self.fig, self.ax = plt.subplots()
 
+        selected_folder = CONFIG_OBJECT["Variables"]["flashcard-folder"]
+        selected_csv_name = CONFIG_OBJECT["Variables"]["selected-flashcard-file"]
+
+        selected_csv = join(selected_folder, selected_csv_name)
+
         score_data = [int(scores) for word, trans,
-                      scores in self.get_words_and_scores_from_csv("word_scores.csv")]
+                      scores in self.get_words_and_scores_from_csv(selected_csv)]
 
         x_max = float(
             CONFIG_OBJECT["FlashCard-Preferences"]["upper_score_limit"])
