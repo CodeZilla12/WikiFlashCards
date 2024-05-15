@@ -14,6 +14,7 @@ class tkinterUI(tk.Tk):
         tkinterUI.width, tkinterUI.height = 800, 400
 
         self.geometry(f"{self.width}x{self.height}")
+        self.title("WikiFlashCards")
 
         self.frame_container = tk.Frame(self)
         self.frame_container.pack(side="top", fill="both", expand=True)
