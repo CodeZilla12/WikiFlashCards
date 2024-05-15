@@ -1,7 +1,7 @@
 import tkinter as tk
 from functools import partial
 import csv
-from os.path import isfile
+from os.path import isfile, join
 import configparser
 from random import choices
 import numpy as np
@@ -23,7 +23,11 @@ class FlashcardPage(tk.Frame):
 
         self.controller = controller
 
-        self.WORD_CSV_PATH = "word_scores.csv"
+        flashcard_folder = CONFIG_OBJECT["Variables"]["flashcard-folder"]
+        flashcard_csv_name = CONFIG_OBJECT["Variables"]["selected-flashcard-file"]
+
+        self.WORD_CSV_PATH = join(flashcard_folder, flashcard_csv_name)
+
         temp_word_trans_score_list = self.get_words_and_scores_from_csv(
             self.WORD_CSV_PATH)
 
@@ -121,7 +125,7 @@ class FlashcardPage(tk.Frame):
         word_list = []
 
         if not isfile(file_path):
-            raise FileNotFoundError("word_scores.csv missing")
+            raise FileNotFoundError("word_scores missing")
 
         with open(file_path, 'r', encoding="utf8") as f:
             csv_reader = csv.reader(f, delimiter=",")
