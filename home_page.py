@@ -34,6 +34,10 @@ class HomePage(tk.Frame):
                            command=self.start_flash_cards)
         button.grid(row=1, column=0)
 
+        top_level_button = tk.Button(
+            self, text="Open Toplevel", command=self.on_top_level_button_click)
+        top_level_button.grid(row=2, column=0)
+
     def start_flash_cards(self):
 
         self.controller.show_frame("FlashcardPage")
@@ -45,3 +49,17 @@ class HomePage(tk.Frame):
 
         with open(self.FLASHCARD_CFG_PATH, "w") as f:
             self.CONFIG_OBJECT.write(f)
+
+    def on_top_level_button_click(self):
+        FlashCardViewer()
+
+
+class FlashCardViewer(tk.Toplevel):
+    def __init__(self):
+
+        tk.Toplevel.__init__(self)
+
+        self.geometry("600x200")
+        self.title("Flashcard Viewer")
+
+        self.mainloop()
