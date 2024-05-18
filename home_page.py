@@ -2,6 +2,8 @@ import tkinter as tk
 import configparser
 from os.path import join
 from os import listdir
+from utils import get_words_and_scores_from_csv, write_scores_to_csv
+from flashcard_viewer import FlashcardViewer
 
 
 class HomePage(tk.Frame):
@@ -39,7 +41,6 @@ class HomePage(tk.Frame):
         top_level_button.grid(row=2, column=0)
 
     def start_flash_cards(self):
-
         self.controller.show_frame("FlashcardPage")
 
     def on_new_flashcard_file_selected(self, _):
@@ -51,15 +52,5 @@ class HomePage(tk.Frame):
             self.CONFIG_OBJECT.write(f)
 
     def on_top_level_button_click(self):
+        # Atm this is a floating top window - link to current window
         FlashCardViewer()
-
-
-class FlashCardViewer(tk.Toplevel):
-    def __init__(self):
-
-        tk.Toplevel.__init__(self)
-
-        self.geometry("600x200")
-        self.title("Flashcard Viewer")
-
-        self.mainloop()
