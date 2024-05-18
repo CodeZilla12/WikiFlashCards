@@ -62,11 +62,15 @@ class HomePage(tk.Frame):
             f.write(",,0")
         self.set_entry_text(self.new_flashcard_entry, "Creation Successful!")
 
+        # Bit hacky, but it works
+        self.controller.show_frame("HomePage")
+
         # Refreshing option menu
-        self.option_menu["menu"].delete(0, 'end')
-        for choice in listdir(self.flashcard_file_folder):
-            self.option_menu["menu"].add_command(
-                label=choice, command=tk._setit(self.selected_file_tkstring, choice))
+        # Currently this breaks the stringvar, needing a program reset before editing files
+        # self.option_menu["menu"].delete(0, 'end')
+        # for choice in listdir(self.flashcard_file_folder):
+        #     self.option_menu["menu"].add_command(
+        #         label=choice, command=tk._setit(self.selected_file_tkstring, choice))
 
     def set_entry_text(self, entry_object, new_text):
         entry_object.delete(0, tk.END)
