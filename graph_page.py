@@ -55,7 +55,7 @@ class GraphPage(tk.Frame):
         self.focus_set()  # Focuses current frame so that it can take keypresses
 
     def kill_program(self, *_):
-        # Should move this into controller to reduce repeated code
+        # Could move this into controller to avoid repeated code
         print("Ending Program...")
 
         self.controller.destroy()
