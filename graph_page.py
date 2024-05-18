@@ -42,9 +42,9 @@ class GraphPage(tk.Frame):
                      align="mid", facecolor="grey", rwidth=0.9)
         self.ax.set_xticks([i for i in range(int(x_min), int(x_max)+1)])
         self.ax.yaxis.get_major_locator().set_params(integer=True)
-        self.fig.set_size_inches(8, 3.7)
-        self.ax.set_xlabel("Score", size=12)
-        self.ax.set_ylabel("Frequency", size=12)
+        self.fig.set_size_inches(8, 4.0)
+        self.ax.set_xlabel("Score", size=11)
+        self.ax.set_ylabel("Frequency", size=11)
 
         canvas = FigureCanvasTkAgg(self.fig, master=self)
         canvas.draw()
