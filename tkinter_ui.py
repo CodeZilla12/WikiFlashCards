@@ -1,5 +1,4 @@
 import tkinter as tk
-# from tkinter import ttk
 from flashcard_page import FlashcardPage
 from graph_page import GraphPage
 from home_page import HomePage
