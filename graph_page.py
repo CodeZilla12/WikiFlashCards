@@ -59,6 +59,7 @@ class GraphPage(tk.Frame):
         self.focus_set()  # Focuses current frame so that it can take keypresses
 
     def on_return_home_clicked(self):
+        self.controller.title("WikiFlashCards")
         self.controller.show_frame("HomePage")
 
     def kill_program(self, *_):
