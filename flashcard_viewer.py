@@ -2,7 +2,7 @@ import tkinter as tk
 from utils import get_words_and_scores_from_csv, write_scores_to_csv
 
 
-class FlashCardViewer(tk.Toplevel):
+class FlashcardViewer(tk.Toplevel):
     def __init__(self):
 
         tk.Toplevel.__init__(self)

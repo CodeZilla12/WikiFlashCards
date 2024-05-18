@@ -53,4 +53,4 @@ class HomePage(tk.Frame):
 
     def on_top_level_button_click(self):
         # Atm this is a floating top window - link to current window
-        FlashCardViewer()
+        FlashcardViewer()
