@@ -38,9 +38,9 @@ class HomePage(tk.Frame):
                            command=self.start_flash_cards)
         button.grid(row=1, column=0)
 
-        top_level_button = tk.Button(
-            self, text="Open Toplevel", command=self.on_top_level_button_click)
-        top_level_button.grid(row=2, column=0)
+        edit_flashcards = tk.Button(
+            self, text="Edit Selected", command=self.on_top_level_button_click)
+        edit_flashcards.grid(row=2, column=0)
 
     def start_flash_cards(self):
         self.controller.show_frame("FlashcardPage")
