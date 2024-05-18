@@ -1,7 +1,6 @@
 import tkinter as tk
 from functools import partial
-import csv
-from os.path import isfile, join
+from os.path import join
 import configparser
 from random import choices
 import numpy as np
