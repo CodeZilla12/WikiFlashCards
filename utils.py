@@ -27,12 +27,19 @@ def get_words_and_scores_from_csv(file_path: str) -> list:
     return word_list
 
 
-def write_scores_to_csv(file_path: str, word_trans_score_list: list) -> None:
+def write_scores_to_csv(file_path: str, word_trans_score_list: list, edit_mode=False) -> None:
+
+    # If want to just write the passed in list directly to csv
+    if edit_mode:
+        with open(file_path, 'w', encoding="utf-8") as f:
+            csv_writer = csv.writer(f, delimiter=",", lineterminator="\n")
+            csv_writer.writerows(word_trans_score_list)
+        return
 
     csv_word_trans_score_list = get_words_and_scores_from_csv(
         file_path)
 
-    # Change this so that it only updates scores which have changed from the csv
+    # Inserts new values from word_trans_score_list into csv_list
     for word, trans, score in word_trans_score_list:
         for i, n in enumerate(csv_word_trans_score_list):
             csv_word, _, _ = n

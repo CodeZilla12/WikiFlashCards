@@ -57,14 +57,19 @@ class FlashcardViewer(tk.Toplevel):
             button_frame, text="+", command=self.on_add_new_flashcard_button_clicked)
 
         save_button = tk.Button(button_frame,
-                                text="save", command=self.on_save_button_clicked)
+                                text="save all", command=self.on_save_button_clicked)
+
+        delete_flashcard_button = tk.Button(
+            button_frame, text="Delete", command=self.on_delete_flashcard_button_clicked)
 
         # Packing buttons into frame
         previous_button.grid(row=2, column=0)
         next_button.grid(row=2, column=1)
         add_new_flashcard_button.grid(row=2, column=2)
         save_button.grid(row=2, column=3)
-        button_frame.grid(row=2, column=0, sticky="s")
+
+        delete_flashcard_button.grid(row=2, column=4, padx=20)
+        button_frame.grid(row=2, column=0, sticky="w")
 
         # Keybinds not working for some reason
         self.bind_all("<<Modified>>", self.text_modified)
@@ -73,7 +78,12 @@ class FlashcardViewer(tk.Toplevel):
         self.focus_set()  # Focuses current frame so that it can take keypress
 
     def text_modified(self, event):
-        print("modified")
+        pass
+
+    def on_delete_flashcard_button_clicked(self):
+        self.word_trans_score_list.pop(self.word_index)
+        self.word_index -= 1
+        self.on_next_button_clicked()
 
     def on_next_button_clicked(self, *_):
 
@@ -107,7 +117,13 @@ class FlashcardViewer(tk.Toplevel):
             '1.0', self.word_trans_score_list[self.word_index][1])
 
     def on_save_button_clicked(self):
-        pass
+        new_word = self.word_text_field.get("1.0", tk.END).strip("\n")
+        new_trans = self.trans_text_field.get("1.0", tk.END).strip("\n")
+
+        # When word is edited, reset the score to zero
+        self.word_trans_score_list[self.word_index] = [new_word, new_trans, 0]
+        write_scores_to_csv(self.FLASHCARD_PATH,
+                            self.word_trans_score_list, edit_mode=True)
 
     def on_add_new_flashcard_button_clicked(self):
         pass
