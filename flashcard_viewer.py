@@ -67,11 +67,13 @@ class FlashcardViewer(tk.Toplevel):
         button_frame.grid(row=2, column=0, sticky="s")
 
         # Keybinds not working for some reason
+        self.bind_all("<<Modified>>", self.text_modified)
         # self.bind("Right", self.on_next_button_clicked)
         # self.bind("Left", self.on_previous_button_clicked)
-        # self.focus_set()  # Focuses current frame so that it can take keypresses
+        self.focus_set()  # Focuses current frame so that it can take keypress
 
-        self.mainloop()
+    def text_modified(self, event):
+        print("modified")
 
     def on_next_button_clicked(self, *_):
 
