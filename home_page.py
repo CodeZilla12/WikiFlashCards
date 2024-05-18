@@ -20,11 +20,10 @@ class HomePage(tk.Frame):
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
 
-        logo_frame = tk.Frame(self)
-        logo = tk.Label(logo_frame, text="WikiFlashCards",
-                        font=("Helvetica", 28))
-        logo.grid()
-        logo_frame.grid(row=0, column=2, sticky='ew')
+        # Uses .place here to fix issues with widget overlapping
+        logo = tk.Label(self, text="WikiFlashcards",
+                        font=("Helvetica", 37))
+        logo.place(anchor=tk.CENTER, relx=.5, rely=.4)
 
         self.selected_file_tkstring = tk.StringVar(self)
         self.flashcard_file_folder = self.CONFIG_OBJECT["Variables"]["flashcard-folder"]
