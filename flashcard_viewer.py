@@ -24,7 +24,7 @@ class FlashcardViewer(tk.Toplevel):
         self.word_index = 0
 
         self.geometry("600x200")
-        self.title("Flashcard Viewer")
+        self.title(f"Editing {self.SELECTED_FLASHCARD_FILE.split('.')[0]}")
 
         # Iterate through each entry in selected config.
         entry_frame = tk.Frame(self)
