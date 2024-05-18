@@ -9,8 +9,7 @@ class tkinterUI(tk.Tk):
     def __init__(self, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
 
-        # Set as class variable so frames can access.
-        tkinterUI.width, tkinterUI.height = 800, 430
+        self.width, self.height = 800, 430
 
         self.geometry(f"{self.width}x{self.height}")
         self.title("WikiFlashCards")
