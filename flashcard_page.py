@@ -69,6 +69,10 @@ class FlashcardPage(tk.Frame):
         self.waiting_for_answer = False
         self.word_list_complete = False
 
+        go_home_button = tk.Button(
+            self, text="Return Home", command=self.go_home_button_clicked)
+        go_home_button.pack(anchor='ne')
+
         # Initialising Initial display widgets
         self.displayed_word = tk.Label(
             self, text=self.word_trans_score_list[self.word_index][0], font=FONT)
@@ -113,6 +117,9 @@ class FlashcardPage(tk.Frame):
         self.bind("c", partial(self.answer_button_clicked, "okay"))
         self.bind("v", partial(self.answer_button_clicked, "easy"))
         self.focus_set()  # Focuses current frame so that it can take keypresses
+
+    def go_home_button_clicked(self):
+        self.controller.show_frame("HomePage")
 
     def reset_all_scores(self, *_):
 
