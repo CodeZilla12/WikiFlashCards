@@ -30,19 +30,19 @@ class FlashcardViewer(tk.Toplevel):
         entry_frame = tk.Frame(self)
 
         # Using width to specify widget width means character length - not pixel length. Find a way for pixel width instead.
-        word_text_field = tk.Text(entry_frame, height=2, width=74)
+        self.word_text_field = tk.Text(entry_frame, height=2, width=74)
 
         # 1.0 refers to line 1 character 0
-        word_text_field.insert(
+        self.word_text_field.insert(
             "1.0", self.word_trans_score_list[self.word_index][0])
 
-        trans_text_field = tk.Text(entry_frame, height=2, width=74)
+        self.trans_text_field = tk.Text(entry_frame, height=2, width=74)
 
-        trans_text_field.insert(
+        self.trans_text_field.insert(
             "1.0", self.word_trans_score_list[self.word_index][1])
 
-        word_text_field.grid(row=0, column=0)
-        trans_text_field.grid(row=1, column=0)
+        self.word_text_field.grid(row=0, column=0)
+        self.trans_text_field.grid(row=1, column=0)
         entry_frame.grid(row=0, column=0)
 
         button_frame = tk.Frame(self)
@@ -66,13 +66,43 @@ class FlashcardViewer(tk.Toplevel):
         save_button.grid(row=2, column=3)
         button_frame.grid(row=2, column=0, sticky="s")
 
+        # Keybinds not working for some reason
+        # self.bind("Right", self.on_next_button_clicked)
+        # self.bind("Left", self.on_previous_button_clicked)
+        # self.focus_set()  # Focuses current frame so that it can take keypresses
+
         self.mainloop()
 
-    def on_next_button_clicked(self):
-        pass
+    def on_next_button_clicked(self, *_):
 
-    def on_previous_button_clicked(self):
-        pass
+        self.word_index += 1
+
+        if self.word_index >= len(self.word_trans_score_list):
+            self.word_index -= 1
+            return
+
+        self.word_text_field.delete('1.0', tk.END)
+        self.word_text_field.insert(
+            '1.0', self.word_trans_score_list[self.word_index][0])
+
+        self.trans_text_field.delete('1.0', tk.END)
+        self.trans_text_field.insert(
+            '1.0', self.word_trans_score_list[self.word_index][1])
+
+    def on_previous_button_clicked(self, *_):
+        self.word_index -= 1
+
+        if self.word_index < 0:
+            self.word_index += 1
+            return
+
+        self.word_text_field.delete('1.0', tk.END)
+        self.word_text_field.insert(
+            '1.0', self.word_trans_score_list[self.word_index][0])
+
+        self.trans_text_field.delete('1.0', tk.END)
+        self.trans_text_field.insert(
+            '1.0', self.word_trans_score_list[self.word_index][1])
 
     def on_save_button_clicked(self):
         pass
