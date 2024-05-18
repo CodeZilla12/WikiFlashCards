@@ -36,23 +36,30 @@ class GraphPage(tk.Frame):
         selected_flashcard_set = self.CONFIG_OBJECT["Variables"]["selected-flashcard-file"].split(".")[
             0]
 
-        self.ax.set_title(
-            "Histogram - Progress for " + selected_flashcard_set)
+        controller.title("Histogram - Progress for " + selected_flashcard_set)
 
         self.ax.hist(score_data, range=(x_min, x_max),
                      align="mid", facecolor="grey", rwidth=0.9)
         self.ax.set_xticks([i for i in range(int(x_min), int(x_max)+1)])
         self.ax.yaxis.get_major_locator().set_params(integer=True)
-
+        self.fig.set_size_inches(8, 3.7)
         self.ax.set_xlabel("Score", size=12)
         self.ax.set_ylabel("Frequency", size=12)
 
         canvas = FigureCanvasTkAgg(self.fig, master=self)
         canvas.draw()
-        canvas.get_tk_widget().pack()
+        canvas.get_tk_widget().grid(row=0, column=0)
+
+        exit_button = tk.Button(self, text="Return Home",
+                                command=self.on_return_home_clicked)
+
+        exit_button.grid(row=1, column=0)
 
         self.bind("<Escape>", self.kill_program)
         self.focus_set()  # Focuses current frame so that it can take keypresses
+
+    def on_return_home_clicked(self):
+        self.controller.show_frame("HomePage")
 
     def kill_program(self, *_):
         # Could move this into controller to avoid repeated code
