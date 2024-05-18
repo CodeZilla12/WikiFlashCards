@@ -59,8 +59,13 @@ class HomePage(tk.Frame):
         new_flashcard_frame.grid(row=99, column=99, sticky='se')
 
     def new_flashcard_file_button_clicked(self):
-        filename = join(self.flashcard_file_folder,
-                        self.new_flashcard_entry.get() + ".flashcards")
+        entered_name = self.new_flashcard_entry.get()
+
+        if entered_name == ".flashcards":
+            return
+        filename = join(self.flashcard_file_folder, entered_name
+                        + ".flashcards")
+
         current_files = listdir(self.flashcard_file_folder)
         if filename in current_files:
             self.set_entry_text(self.new_flashcard_entry,
