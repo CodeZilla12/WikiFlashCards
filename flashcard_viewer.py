@@ -126,4 +126,6 @@ class FlashcardViewer(tk.Toplevel):
                             self.word_trans_score_list, edit_mode=True)
 
     def on_add_new_flashcard_button_clicked(self):
-        pass
+        self.word_trans_score_list.insert(self.word_index, ["", "", 0])
+        self.word_index -= 1
+        self.on_next_button_clicked()
