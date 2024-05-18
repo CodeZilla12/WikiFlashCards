@@ -2,7 +2,6 @@ import tkinter as tk
 import configparser
 from os.path import join
 from os import listdir
-from utils import get_words_and_scores_from_csv, write_scores_to_csv
 from flashcard_viewer import FlashcardViewer
 
 # Have it make a backup of flashcard files on startup
@@ -12,35 +11,44 @@ class HomePage(tk.Frame):
 
     def __init__(self: tk.Frame, parent: tk.Frame, controller: tk.Tk):
         tk.Frame.__init__(self, parent)
-
         self.controller = controller
 
         self.FLASHCARD_CFG_PATH = "flashcard-config.cfg"
         self.CONFIG_OBJECT = configparser.ConfigParser()
         self.CONFIG_OBJECT.read(self.FLASHCARD_CFG_PATH)
 
-        label = tk.Label(self, text="FlashcardFile")
-        label.grid(row=0, column=0)
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1)
+
+        # Uses .place here to fix issues with widget overlapping
+        logo = tk.Label(self, text="WikiFlashcards",
+                        font=("Helvetica", 37))
+        logo.place(anchor=tk.CENTER, relx=.5, rely=.4)
 
         self.selected_file_tkstring = tk.StringVar(self)
-
         self.flashcard_file_folder = self.CONFIG_OBJECT["Variables"]["flashcard-folder"]
         selected_flashcard_file_path = self.CONFIG_OBJECT["Variables"]["selected-flashcard-file"]
         self.selected_file_tkstring.set(selected_flashcard_file_path)
-
         flashcard_file_list = listdir(self.flashcard_file_folder)
 
+        option_edit_frame = tk.Frame(self)
+
         self.option_menu = tk.OptionMenu(
-            self, self.selected_file_tkstring, *flashcard_file_list, command=self.on_new_flashcard_file_selected)
+            option_edit_frame, self.selected_file_tkstring, *flashcard_file_list, command=self.on_new_flashcard_file_selected)
+        self.option_menu.pack(side=tk.RIGHT)
+
         self.option_menu.grid(row=0, column=1)
 
         button = tk.Button(self, text="Start Flashcards",
-                           command=self.start_flash_cards)
-        button.grid(row=1, column=0)
+                           command=self.start_flash_cards, width=50)
+
+        button.grid(row=99, column=0, sticky='sw')
 
         edit_flashcards = tk.Button(
-            self, text="Edit Selected", command=self.on_top_level_button_click)
-        edit_flashcards.grid(row=2, column=0)
+            option_edit_frame, text="Edit Selected", command=self.on_top_level_button_click)
+        edit_flashcards.grid(row=0, column=0, pady=5)
+
+        option_edit_frame.grid(row=98, column=0, sticky='sw')
 
         new_flashcard_frame = tk.Frame(self)
         new_flashcard_file_button = tk.Button(
@@ -48,15 +56,20 @@ class HomePage(tk.Frame):
         self.new_flashcard_entry = tk.Entry(new_flashcard_frame)
         new_flashcard_file_button.pack(side=tk.RIGHT)
         self.new_flashcard_entry.pack(side=tk.LEFT)
-        new_flashcard_frame.grid(row=3, column=0)
+        new_flashcard_frame.grid(row=99, column=99, sticky='se')
 
     def new_flashcard_file_button_clicked(self):
-        filename = join(self.flashcard_file_folder,
-                        self.new_flashcard_entry.get() + ".flashcards")
+        entered_name = self.new_flashcard_entry.get()
+
+        if entered_name == ".flashcards":
+            return
+        filename = join(self.flashcard_file_folder, entered_name
+                        + ".flashcards")
+
         current_files = listdir(self.flashcard_file_folder)
         if filename in current_files:
             self.set_entry_text(self.new_flashcard_entry,
-                                "FILE ALREADY EXISTS!!!")
+                                "FILE ALREADY EXISTS!")
             return
         with open(filename, 'w+') as f:
             f.write(",,0")

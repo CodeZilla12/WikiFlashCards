@@ -23,7 +23,7 @@ class FlashcardViewer(tk.Toplevel):
             self.FLASHCARD_PATH)
         self.word_index = 0
 
-        self.geometry("600x200")
+        self.geometry("600x115")
         self.title(f"Editing {self.SELECTED_FLASHCARD_FILE.split('.')[0]}")
 
         # Iterate through each entry in selected config.
@@ -70,15 +70,6 @@ class FlashcardViewer(tk.Toplevel):
 
         delete_flashcard_button.grid(row=2, column=4, padx=20)
         button_frame.grid(row=2, column=0, sticky="w")
-
-        # Keybinds not working for some reason
-        self.bind_all("<<Modified>>", self.text_modified)
-        # self.bind("Right", self.on_next_button_clicked)
-        # self.bind("Left", self.on_previous_button_clicked)
-        self.focus_set()  # Focuses current frame so that it can take keypress
-
-    def text_modified(self, event):
-        pass
 
     def on_delete_flashcard_button_clicked(self):
         self.word_trans_score_list.pop(self.word_index)
