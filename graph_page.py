@@ -4,6 +4,7 @@ import configparser
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from os.path import isfile, join
+from utils import get_words_and_scores_from_csv
 
 
 class GraphPage(tk.Frame):
@@ -25,61 +26,45 @@ class GraphPage(tk.Frame):
         selected_csv = join(selected_folder, selected_csv_name)
 
         score_data = [int(scores) for word, trans,
-                      scores in self.get_words_and_scores_from_csv(selected_csv)]
+                      scores in get_words_and_scores_from_csv(selected_csv)]
 
         x_max = float(
             self.CONFIG_OBJECT["FlashCard-Preferences"]["upper_score_limit"])
         x_min = float(
             self.CONFIG_OBJECT["FlashCard-Preferences"]["lower_score_limit"])
 
-        self.ax.set_title(
-            "Histogram - Progress for Selected Set")
+        selected_flashcard_set = self.CONFIG_OBJECT["Variables"]["selected-flashcard-file"].split(".")[
+            0]
+
+        controller.title("Histogram - Progress for " + selected_flashcard_set)
 
         self.ax.hist(score_data, range=(x_min, x_max),
                      align="mid", facecolor="grey", rwidth=0.9)
         self.ax.set_xticks([i for i in range(int(x_min), int(x_max)+1)])
         self.ax.yaxis.get_major_locator().set_params(integer=True)
-
-        self.ax.set_xlabel("Score", size=12)
-        self.ax.set_ylabel("Frequency", size=12)
+        self.fig.set_size_inches(8, 4.0)
+        self.ax.set_xlabel("Score", size=11)
+        self.ax.set_ylabel("Frequency", size=11)
 
         canvas = FigureCanvasTkAgg(self.fig, master=self)
         canvas.draw()
-        canvas.get_tk_widget().pack()
+        canvas.get_tk_widget().grid(row=0, column=0)
+
+        exit_button = tk.Button(self, text="Return Home",
+                                command=self.on_return_home_clicked)
+
+        exit_button.grid(row=1, column=0)
 
         self.bind("<Escape>", self.kill_program)
         self.focus_set()  # Focuses current frame so that it can take keypresses
 
+    def on_return_home_clicked(self):
+        self.controller.title("WikiFlashCards")
+        self.controller.show_frame("HomePage")
+
     def kill_program(self, *_):
-        # Should move this into controller to reduce repeated code
+        # Could move this into controller to avoid repeated code
         print("Ending Program...")
 
         self.controller.destroy()
         quit()
-
-    @ staticmethod
-    def get_words_and_scores_from_csv(file_path: str) -> list:
-
-        # This should be moved to an external utilities function as it will likely be used in many places.
-
-        # Items are stored in the csv as:
-        # word, trans, score[/n]word,trans,score[\n]....
-        word_list = []
-
-        if not isfile(file_path):
-            raise FileNotFoundError("word_scores.csv missing")
-
-        with open(file_path, 'r', encoding="utf8") as f:
-            csv_reader = csv.reader(f, delimiter=",")
-            for row in csv_reader:
-
-                if len(row) == 0:
-                    continue
-
-                if len(row) == 2:  # Make this check more specific
-                    row.append(0)
-
-                word, translated_word, score = row
-                word_list.append([word, translated_word, float(score)])
-
-        return word_list
