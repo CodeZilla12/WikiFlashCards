@@ -5,6 +5,8 @@ from os import listdir
 from utils import get_words_and_scores_from_csv, write_scores_to_csv
 from flashcard_viewer import FlashcardViewer
 
+# Have it make a backup of flashcard files on startup
+
 
 class HomePage(tk.Frame):
 
