@@ -8,6 +8,8 @@ from utils import get_words_and_scores_from_csv
 
 
 class GraphPage(tk.Frame):
+    """_summary_ Graphs the progress for the selected .flashcard file. -5 is bad, 0 is okay/unseen, +5 is good. Offers a return home button.
+    """
 
     def __init__(self, parent: tk.Frame, controller: tk.Tk):
         tk.Frame.__init__(self, parent)
