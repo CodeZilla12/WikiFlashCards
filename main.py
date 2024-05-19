@@ -29,6 +29,11 @@ class tkinterUI(tk.Tk):
         self.show_frame("HomePage")
 
     def show_frame(self, frame_name):
+        """_summary_ Clears frame_container of any content and initialises the value of self.frame_dict[frame_name] in frame_container
+
+        Args:
+            frame_name (_type_):str _description_ key to be used in self.frame_dict
+        """
         self.clear_frame(self.frame_container)
 
         frame = self.frame_dict[frame_name](self.frame_container, self)
