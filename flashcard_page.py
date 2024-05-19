@@ -12,6 +12,9 @@ FONT = ("Helvetica", FONTSIZE)
 
 class FlashcardPage(tk.Frame):
 
+    """_summary_ Anki-like flashcard interface. Randomly (weighted by score) chooses a subset of flashcards from selected .flashcard file. User answers how easy/hard they found the flashcard, which then automatically updates the score to make more/less likely. When set is finished, moves on to graph page.
+    """
+
     # Long __init__. Needs refactor?
     def __init__(self, parent: tk.Frame, controller: tk.Tk):
         tk.Frame.__init__(self, parent)
