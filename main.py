@@ -5,9 +5,14 @@ from home_page import HomePage
 
 
 class tkinterUI(tk.Tk):
+    """_Controller class for all of the frames in the UI, referred to as self.controller in child frame classes_
 
-    def __init__(self, *args, **kwargs):
-        tk.Tk.__init__(self, *args, **kwargs)
+    Args:
+        tk (_tk.Tk_): _Allows use of self as tk.tk_
+    """
+
+    def __init__(self):
+        tk.Tk.__init__(self)
 
         self.width, self.height = 800, 430
 
