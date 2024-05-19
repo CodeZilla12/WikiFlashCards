@@ -17,7 +17,7 @@ def get_words_from_articles(seed_url:str, search_depth = 1) -> dict:
 
     return word_dict
 
-def filter_links(link_list:lst) -> list:
+def filter_links(link_list:list) -> list:
     pass
 
 def _grab_links_in_article(url: str) -> list:
