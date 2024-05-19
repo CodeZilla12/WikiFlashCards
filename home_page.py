@@ -5,9 +5,13 @@ from os import listdir
 from flashcard_viewer import FlashcardViewer
 
 # Have it make a backup of flashcard files on startup
+# Add graph page view to homepage
 
 
 class HomePage(tk.Frame):
+
+    """_summary_ First page on application start - can select/edit/create flashcards from here, as well as starting a flashcard session.
+    """
 
     def __init__(self: tk.Frame, parent: tk.Frame, controller: tk.Tk):
         tk.Frame.__init__(self, parent)
