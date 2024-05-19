@@ -5,10 +5,10 @@ from home_page import HomePage
 
 
 class tkinterUI(tk.Tk):
-    """_Controller class for all of the frames in the UI, referred to as self.controller in child frame classes_
+    """_summary_ Controller class for all of the frames in the UI, referred to as self.controller in child frame classes
 
     Args:
-        tk (_tk.Tk_): _Allows use of self as tk.tk_
+        tk (_type_): _description_ Allows use of self as tk.tk
     """
 
     def __init__(self):
