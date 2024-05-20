@@ -17,7 +17,7 @@ def grab_sorted_words(seed_link: str, search_depth: int):
     word_dict = get_words_from_articles(SEED_LINK, SEARCH_DEPTH)
 
     # Sort words based on occurance in the links searched
-    sorted_words = sorted(word_dict, key=word_dict.get)
+    sorted_words = sorted(word_dict, key=word_dict.get)[::-1]
 
     lt_alphabet = set("ertyuiopasdfghjklzxcvbnmąčęėįšųūž".upper()
                       )  # missing key letters
@@ -32,3 +32,4 @@ SEED_LINK = "https://lt.wikipedia.org/wiki/Taryb%C5%B3_S%C4%85junga"
 SEARCH_DEPTH = 0
 
 sorted_word_list = grab_sorted_words(SEED_LINK, SEARCH_DEPTH)
+print(sorted_word_list)
