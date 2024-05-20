@@ -5,6 +5,9 @@
 
 from words_from_wiki import get_words_from_articles
 from translate import translate_word_list
+from utils import write_scores_to_csv
+import configparser
+from os.path import join
 
 
 def grab_sorted_words(seed_link: str, search_depth: int):
@@ -17,12 +20,13 @@ def grab_sorted_words(seed_link: str, search_depth: int):
     word_dict = get_words_from_articles(SEED_LINK, SEARCH_DEPTH)
 
     # Sort words based on occurance in the links searched
-    sorted_words = sorted(word_dict, key=word_dict.get)[::-1]
+    sorted_words = sorted(word_dict, key=word_dict.get)
 
     lt_alphabet = set("ertyuiopasdfghjklzxcvbnmąčęėįšųūž".upper()
                       )  # missing key letters
     # filters out russian, greek alphabets etc.
-    sorted_words = [i for i in sorted_words if set(i).issubset(lt_alphabet)]
+    sorted_words = [i.capitalize()
+                    for i in sorted_words if set(i).issubset(lt_alphabet)]
 
     return sorted_words
 
@@ -30,6 +34,16 @@ def grab_sorted_words(seed_link: str, search_depth: int):
 root = "https://lt.wikipedia.org"
 SEED_LINK = "https://lt.wikipedia.org/wiki/Taryb%C5%B3_S%C4%85junga"
 SEARCH_DEPTH = 0
+FLASHCARD_NAME = "TarybJungaSD0_Wiki"
 
-sorted_word_list = grab_sorted_words(SEED_LINK, SEARCH_DEPTH)
-print(sorted_word_list)
+word_list = grab_sorted_words(SEED_LINK, SEARCH_DEPTH)
+word_trans_score_list = translate_word_list(word_list)
+
+CONFIG_OBJECT = configparser.ConfigParser()
+CONFIG_PATH = "flashcard-config.cfg"
+CONFIG_OBJECT.read(CONFIG_PATH)
+
+new_flashcard_path = join(
+    CONFIG_OBJECT["Variables"]["flashcard-folder"], FLASHCARD_NAME+".flashcards")
+
+write_scores_to_csv(new_flashcard_path, word_trans_score_list, edit_mode=1)
