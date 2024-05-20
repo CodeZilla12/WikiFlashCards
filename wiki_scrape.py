@@ -31,7 +31,10 @@ def grab_sorted_words(seed_link: str, search_depth: int):
     return sorted_words
 
 
-def generate_flashcard_file_from_wiki(seed_link: str, flashcard_name: str):
+def generate_flashcard_file_from_wiki(seed_link: str, flashcard_name=None):
+
+    if flashcard_name == None:
+        flashcard_name = seed_link.split("/")[-1]
 
     # seed_link = "https://lt.wikipedia.org/wiki/Taryb%C5%B3_S%C4%85junga"  #example link
     # flashcard_name = "TarybJungaSD0_Wiki"
