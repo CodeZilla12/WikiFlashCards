@@ -78,11 +78,15 @@ def _get_article_text(url: str) -> str:
     # Maybe check if successful connection here. Example of bad connection: https://lt.wikipedia.org/commons.wikimedia.org/wiki/File:Flag_of_Mongolia_(construction_sheet).svg
 
     try:
-        article_text = "".join([x.text for x in soup.find(id="bodyContent").find_all(
-            'p')]).upper()  # improve this to be more selective
-        article_text = "".join([i for i in article_text if i.isalpha(
-        ) or i == " "]).replace("  ", " ").replace("  ", " ")
-    except AttributeError:
+        text_div = soup.find(
+            "div", {"class": "mw-content-ltr mw-parser-output"})
+
+        article_text = text_div.findAll('p')
+
+        article_text = "".join([i.text for i in article_text]).upper()
+
+    except AttributeError as e:
+        print(e)
         print(f"No text found at {url}!")
         return ""
 
