@@ -32,9 +32,13 @@ def _grab_links_in_article(url: str) -> list:
     soup = BeautifulSoup(page.content, 'html.parser')
     try:
         all_links = [link.get('href') for link in soup.find(
-            id="bodyContent").find_all("a") if link.get('href')]
+            "div", {"class": "mw-content-ltr mw-parser-output"}).find_all("a") if link.get('href')]
         all_links = [ROOT_URL +
                      i for i in all_links if '/wiki/' in i and '://' not in i]
+
+        # Each link is always listed twice. Bandaid fix.
+        all_links = list(set(all_links))
+
     except AttributeError:
         print(f"No links found at {url}!")
         return []
