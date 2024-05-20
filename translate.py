@@ -16,44 +16,18 @@ CHARS_PER_100_SECONDS = 100_000
 
 def translate_word_list(word_list: list):
 
-    total_chars = sum([len(i) for i in word_list])
+    word_string = ".".join(word_list)
+
+    total_chars = sum([len(i) for i in word_string])
 
     translator = googletrans.Translator()
 
-    chunked_words = []
-    previous = 0
-    current_n_chars = 0
-    for i, word in enumerate(word_list):
-        current_n_chars += len(word)
+    assert total_chars <= TRANSLATE_CHAR_LIMIT, "Too many words, in future update will implement chunking. Choose a different article or lower chunk depth."
 
-        if current_n_chars >= CHARS_PER_100_SECONDS:
-            # Indicate that this chunk should have a 100 second wait
-            chunked_words.append(["P"])
+    translated_words = translator.translate(
+        word_string, dest='en', src='lt').text.split(".")
 
-        coefficient = len(chunked_words) if len(chunked_words) > 0 else 1
-        if current_n_chars >= (coefficient*TRANSLATE_CHAR_LIMIT) - DELTA_CHAR:
-            current_n_chars -= len(word)
-            chunked_words.append(word_list[previous:i-1])
+    word_trans_score_list = [[word, trans, 0]
+                             for word, trans in zip(word_list, translated_words)]
 
-            previous = i
-
-    print(len(word_list))
-    # print(total_chars)
-    print(chunked_words)
-
-    print("Translating Words...")
-    time.sleep(1)
-    translated_words = []
-
-    for chunk in tqdm(chunked_words):
-        if not chunk:
-            continue
-        if chunk[0] == "P":
-            time.sleep(101)
-        # API is very slow. Multiple minutes.
-        translated_words.extend(
-            translator.translate(chunk, dest='en', src='lt'))
-
-    with open("Words.txt", "w+", encoding='utf-8') as f:
-        for lt, en in tqdm(zip(word_list, translated_words)):
-            f.write(f"{lt}:{en.text}\n")
+    return word_trans_score_list
