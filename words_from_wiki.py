@@ -20,9 +20,6 @@ def get_words_from_articles(seed_url: str, search_depth=1) -> dict:
 
 
 def filter_links(link_list: list) -> list:
-
-
-def filter_links(link_list: list) -> list:
     pass
 
 
