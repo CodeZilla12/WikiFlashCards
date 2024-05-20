@@ -1,1 +1,3 @@
-#  Flashcard Viewer with auto-generated flashcard sets (scraped from wikipedia)
+# WikiFlashCards
+
+Flashcard practice software with auto-generated flashcard sets
