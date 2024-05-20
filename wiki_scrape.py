@@ -4,71 +4,53 @@
 # package words with english translation
 
 from words_from_wiki import get_words_from_articles
+from translate import translate_word_list
+from utils import write_scores_to_csv
+import configparser
+from os.path import join
 
-from tqdm import tqdm
-import googletrans
-import time
 
-root = "https://lt.wikipedia.org"
-SEED_LINK = "https://lt.wikipedia.org/wiki/Taryb%C5%B3_S%C4%85junga"
-SEARCH_DEPTH = 1
+def grab_sorted_words(seed_link: str, search_depth: int):
+    """_summary_ Given a seed link an search depth, grab a list of words from an lt.wikipedia link 
 
-word_dict = get_words_from_articles(SEED_LINK,SEARCH_DEPTH)
+    Args:
+        seed_link (_type_):str _description_ First link which is searched for words and links
+        search_depth (_type_):int _description_ How many links deep do you need to go i.e 0:Don't follow any links, 1:Follow links from first page, 2:Follow links from 1 etc..
+    """
+    word_dict = get_words_from_articles(seed_link, search_depth)
 
-sorted_words = sorted(word_dict, key=word_dict.get) #https://stackoverflow.com/questions/12987178/sort-a-list-based-on-dictionary-values-in-python
+    # Sort words based on occurance in the links searched
+    sorted_words = sorted(word_dict, key=word_dict.get)
 
-lt_alphabet = set("ertyuiopasdfghjklzxcvbnmąčęėįšųūž".upper()) #missing key letters
-sorted_words = [i for i in sorted_words if set(i).issubset(lt_alphabet)] #filters out russian, greek alphabets etc.
+    lt_alphabet = set("ertyuiopasdfghjklzxcvbnmąčęėįšųūž".upper()
+                      )  # missing key letters
+    # filters out russian, greek alphabets etc.
+    sorted_words = [i.capitalize()
+                    for i in sorted_words if set(i).issubset(lt_alphabet)]
 
-print(sorted_words)
+    return sorted_words
 
-quit()
 
-#Notes on translate api
-#The maximum character limit on a single text is 15k https://py-googletrans.readthedocs.io/en/latest/
-#Google Translate API also has a default limit of 2 million characters per day and 100,000 characters per 100 second https://help.stackby.com/article/71-google-translate
-#Can use googletrans.models to perhaps get confidence of translation
+def generate_flashcard_file_from_wiki(seed_link: str, flashcard_name=None):
 
-TRANSLATE_CHAR_LIMIT = 15_000
-DELTA_CHAR = TRANSLATE_CHAR_LIMIT*0.1
+    if flashcard_name == None:
+        flashcard_name = "".join(
+            [i for i in seed_link.split("/")[-1] if i.isalnum()])
 
-CHARS_PER_100_SECONDS = 100_000
+    # seed_link = "https://lt.wikipedia.org/wiki/Taryb%C5%B3_S%C4%85junga"  #example link
+    # flashcard_name = "TarybJungaSD0_Wiki"
 
-total_chars = sum( [len(i) for i in sorted_words] )
+    # At the moment hard code for a search depth of one until bugs fixed
+    SEARCH_DEPTH = 0
 
-translator = googletrans.Translator()
+    word_list = grab_sorted_words(seed_link, SEARCH_DEPTH)
+    word_trans_score_list = translate_word_list(word_list)
 
-chunked_words = []
-previous = 0
-current_n_chars = 0
-for i,word in enumerate(sorted_words):
-    current_n_chars += len(word)
+    CONFIG_OBJECT = configparser.ConfigParser()
+    CONFIG_PATH = "flashcard-config.cfg"
+    CONFIG_OBJECT.read(CONFIG_PATH)
 
-    if current_n_chars >= CHARS_PER_100_SECONDS:
-        chunked_words.append(["P"]) #Indicate that this chunk should have a 100 second wait
+    new_flashcard_path = join(
+        CONFIG_OBJECT["Variables"]["flashcard-folder"], flashcard_name+".flashcards")
 
-    coefficient = len(chunked_words) if len(chunked_words) > 0 else 1
-    if current_n_chars >= (coefficient*TRANSLATE_CHAR_LIMIT) - DELTA_CHAR:
-        current_n_chars -= len(word)
-        chunked_words.append(sorted_words[previous:i-1])
-
-        previous = i
-
-print(len(sorted_words))
-# print(total_chars)
-print(chunked_words)
-
-print("Translating Words...")
-time.sleep(1)
-translated_words = []
-
-for chunk in tqdm(chunked_words):
-    if not chunk:
-        continue
-    if chunk[0] == "p":
-        time.sleep(101)
-    translated_words.extend( translator.translate(chunk, dest = 'en', src = 'lt'))  #API is very slow. Multiple minutes.
-
-with open("Words.txt", "w+", encoding='utf-8') as f:
-    for lt,en in tqdm(zip(sorted_words,translated_words)):
-        f.write(f"{lt}:{en.text}\n")
+    write_scores_to_csv(new_flashcard_path, word_trans_score_list, edit_mode=1)

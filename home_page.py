@@ -3,11 +3,15 @@ import configparser
 from os.path import join
 from os import listdir
 from flashcard_viewer import FlashcardViewer
-
+from wiki_scrape import generate_flashcard_file_from_wiki
 # Have it make a backup of flashcard files on startup
+# Add graph page view to homepage
 
 
 class HomePage(tk.Frame):
+
+    """_summary_ First page on application start - can select/edit/create flashcards from here, as well as starting a flashcard session.
+    """
 
     def __init__(self: tk.Frame, parent: tk.Frame, controller: tk.Tk):
         tk.Frame.__init__(self, parent)
@@ -50,7 +54,17 @@ class HomePage(tk.Frame):
 
         option_edit_frame.grid(row=98, column=0, sticky='sw')
 
+        wiki_flashcard_frame = tk.Frame(self)
+        self.wiki_link_entry = tk.Entry(wiki_flashcard_frame, width=12)
+        wiki_flashcard_button = tk.Button(
+            wiki_flashcard_frame, text="Lt.Wiki-Generate(ALPHA)", command=self.wiki_flashcard_button_clicked)
+
+        self.wiki_link_entry.pack(side=tk.LEFT)
+        wiki_flashcard_button.pack(side=tk.RIGHT)
+        wiki_flashcard_frame.grid(row=98, column=99)
+
         new_flashcard_frame = tk.Frame(self)
+
         new_flashcard_file_button = tk.Button(
             new_flashcard_frame, text="Create New File", command=self.new_flashcard_file_button_clicked)
         self.new_flashcard_entry = tk.Entry(new_flashcard_frame)
@@ -91,6 +105,17 @@ class HomePage(tk.Frame):
 
     def start_flash_cards(self):
         self.controller.show_frame("FlashcardPage")
+
+    def wiki_flashcard_button_clicked(self):
+        link = self.wiki_link_entry.get()
+
+        # Add link verification here
+
+        generate_flashcard_file_from_wiki(link)
+
+        self.wiki_link_entry.delete(0, tk.END)
+        self.wiki_link_entry.insert(0, "File Generated")
+        self.controller.show_frame("HomePage")
 
     def on_new_flashcard_file_selected(self, _):
         new_flashcard_file_name = self.selected_file_tkstring.get()

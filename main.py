@@ -5,9 +5,14 @@ from home_page import HomePage
 
 
 class tkinterUI(tk.Tk):
+    """_summary_ Controller class for all of the frames in the UI, referred to as self.controller in child frame classes
 
-    def __init__(self, *args, **kwargs):
-        tk.Tk.__init__(self, *args, **kwargs)
+    Args:
+        tk (_type_): _description_ Allows use of self as tk.tk
+    """
+
+    def __init__(self):
+        tk.Tk.__init__(self)
 
         self.width, self.height = 800, 430
 
@@ -24,6 +29,11 @@ class tkinterUI(tk.Tk):
         self.show_frame("HomePage")
 
     def show_frame(self, frame_name):
+        """_summary_ Clears frame_container of any content and initialises the value of self.frame_dict[frame_name] in frame_container
+
+        Args:
+            frame_name (_type_):str _description_ key to be used in self.frame_dict
+        """
         self.clear_frame(self.frame_container)
 
         frame = self.frame_dict[frame_name](self.frame_container, self)

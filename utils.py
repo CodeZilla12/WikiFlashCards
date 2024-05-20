@@ -9,7 +9,7 @@ def get_words_and_scores_from_csv(file_path: str) -> list:
     word_list = []
 
     if not isfile(file_path):
-        raise FileNotFoundError("word_scores missing")
+        raise FileNotFoundError(file_path + " Missing!")
 
     with open(file_path, 'r', encoding="utf8") as f:
         csv_reader = csv.reader(f, delimiter=",")

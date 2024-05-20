@@ -5,6 +5,10 @@ from os.path import join
 
 
 class FlashcardViewer(tk.Toplevel):
+
+    """_summary_ Widget that appears as a separate window when editing flashcards on the homepage. Allows scrolling, saving, deleting and adding flashcards, which updates the relevant .flashcards file
+    """
+
     def __init__(self):
 
         tk.Toplevel.__init__(self)
