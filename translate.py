@@ -14,7 +14,7 @@ DELTA_CHAR = TRANSLATE_CHAR_LIMIT*0.1
 CHARS_PER_100_SECONDS = 100_000
 
 
-def translate_word_list(word_list):
+def translate_word_list(word_list: list):
 
     total_chars = sum([len(i) for i in word_list])
 
