@@ -31,11 +31,13 @@ def grab_sorted_words(seed_link: str, search_depth: int):
     return sorted_words
 
 
-def generate_flashcard_file_from_wiki(seed_link: str):
+def generate_flashcard_file_from_wiki(seed_link: str, flashcard_name: str):
 
     # seed_link = "https://lt.wikipedia.org/wiki/Taryb%C5%B3_S%C4%85junga"  #example link
+    # flashcard_name = "TarybJungaSD0_Wiki"
+
+    # At the moment hard code for a search depth of one until bugs fixed
     SEARCH_DEPTH = 0
-    FLASHCARD_NAME = "TarybJungaSD0_Wiki"
 
     word_list = grab_sorted_words(seed_link, SEARCH_DEPTH)
     word_trans_score_list = translate_word_list(word_list)
@@ -45,6 +47,6 @@ def generate_flashcard_file_from_wiki(seed_link: str):
     CONFIG_OBJECT.read(CONFIG_PATH)
 
     new_flashcard_path = join(
-        CONFIG_OBJECT["Variables"]["flashcard-folder"], FLASHCARD_NAME+".flashcards")
+        CONFIG_OBJECT["Variables"]["flashcard-folder"], flashcard_name+".flashcards")
 
     write_scores_to_csv(new_flashcard_path, word_trans_score_list, edit_mode=1)
