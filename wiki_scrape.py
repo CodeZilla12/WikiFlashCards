@@ -6,10 +6,6 @@
 from words_from_wiki import get_words_from_articles
 from translate import translate_word_list
 
-root = "https://lt.wikipedia.org"
-SEED_LINK = "https://lt.wikipedia.org/wiki/Taryb%C5%B3_S%C4%85junga"
-SEARCH_DEPTH = 1
-
 
 def grab_sorted_words(seed_link: str, search_depth: int):
     """_summary_ Given a seed link an search depth, grab a list of words from an lt.wikipedia link 
@@ -27,3 +23,12 @@ def grab_sorted_words(seed_link: str, search_depth: int):
                       )  # missing key letters
     # filters out russian, greek alphabets etc.
     sorted_words = [i for i in sorted_words if set(i).issubset(lt_alphabet)]
+
+    return sorted_words
+
+
+root = "https://lt.wikipedia.org"
+SEED_LINK = "https://lt.wikipedia.org/wiki/Taryb%C5%B3_S%C4%85junga"
+SEARCH_DEPTH = 0
+
+sorted_word_list = grab_sorted_words(SEED_LINK, SEARCH_DEPTH)
