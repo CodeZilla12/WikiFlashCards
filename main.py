@@ -2,6 +2,11 @@ import tkinter as tk
 from flashcard_page import FlashcardPage
 from graph_page import GraphPage
 from home_page import HomePage
+import os
+
+abspath = os.path.abspath(__file__)
+dname = os.path.dirname(abspath)
+os.chdir(dname)
 
 
 class tkinterUI(tk.Tk):
